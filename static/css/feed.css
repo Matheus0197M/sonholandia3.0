@@ -6,7 +6,7 @@
     margin: 0;
 }
 
-body{ 
+body{  
     background: #080441;
     font-family: 'Varela Round', sans-serif;
     color: white;
@@ -53,6 +53,16 @@ header input{
     border-radius: 10px;
     border: none;
     width: 25rem;
+}
+
+.logout{
+    color: pink;
+    text-decoration: none;
+    font-weight: 600;
+    background: #222;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 101ms linear;
 }
 
 
