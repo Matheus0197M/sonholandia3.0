@@ -23,6 +23,7 @@ body{
     justify-content: center;
     flex-direction: column;
     gap: 3rem;
+    text-align: center;
 }
 
 h1{
@@ -121,9 +122,15 @@ form a{
     gap: 0.5rem;
 }
 
+a img{
+    width: 35px;
+    height: 35px;
+}
+
 .botaoEntrar{
-    background: linear-gradient(to right, #0077ff, #2c0092);
-    padding: 5px 5rem;
+    background: #111;
+    color: #fff;
+    border: 2px solid #eee;
 }
 
 .entrarGoogle{
@@ -136,6 +143,9 @@ form a{
     font-weight: 700;
 }
 
+.botaoCadastrar{
+    margin: 0 18px;
+}
 
 article{
     display: flex;
@@ -211,6 +221,7 @@ option{
 a:hover{
     color: rgb(162, 0, 255);
     transition: all 101ms linear;
+    text-decoration: underline;
 }
 
 .botaoEntrar:hover{
@@ -226,6 +237,7 @@ a:hover{
     color: #eaecff;
     box-shadow: 0 2px 4px #e6d8c7;
     transition: all 101ms linear;
+    text-decoration: none;
 }
 
 .entrarFacebook:hover{
@@ -235,6 +247,17 @@ a:hover{
     color: #0059ff;
     box-shadow: 0 2px 4px #0077ff;
     transition: all 101ms linear;
+    text-decoration: none;
+}
+
+.botaoCadastrar:hover{
+    transform: scale(1.02);
+    transform: rotate(-1.03deg);
+    padding: 8px;
+    color: #9900ff;
+    box-shadow: 0 2px 4px #7700ff;
+    transition: all 101ms linear;
+    text-decoration: none;
 }
 
 .copyright:hover{

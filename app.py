@@ -1,69 +1,37 @@
-import os, logging
-from flask import Flask, render_template, session, redirect, url_for
-from authlib.integrations.flask_client import OAuth
-from dotenv import load_dotenv
+"""Aplicação principal Sonholândia"""
+import logging
+from flask import Flask
 
-# carrega .env
-load_dotenv()
+from config import Config
+from models import init_db
+from routes import auth_bp, main_bp
+from routes.oauth import init_oauth, set_oauth
+from utils import setup_ssl
 
-# --- força requests/urllib3 a usar bundle de CA do certifi (útil em dev) ---
-import certifi
-os.environ.setdefault('REQUESTS_CA_BUNDLE', certifi.where())
-os.environ.setdefault('SSL_CERT_FILE', certifi.where())
-
-# logging
-logging.basicConfig(level=logging.DEBUG)
+# Configuração de logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
+# Configura SSL
+setup_ssl()
+
+# Cria aplicação Flask
 app = Flask(__name__, static_folder='static', template_folder='templates')
-app.secret_key = os.getenv("SECRET_KEY", "dev_secret")
+app.config.from_object(Config)
 
-# debug info
-logger.debug("GOOGLE_CLIENT_ID=%s", os.getenv("GOOGLE_CLIENT_ID"))
-logger.debug("OAUTH_REDIRECT_URI=%s", os.getenv("OAUTH_REDIRECT_URI"))
+# Inicializa banco de dados
+init_db()
 
-# configura OAuth (OpenID Connect)
-oauth = OAuth(app)
-oauth.register(
-    name='google',
-    client_id=os.getenv("GOOGLE_CLIENT_ID"),
-    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'}
-)
+# Inicializa OAuth
+oauth = init_oauth(app)
+set_oauth(oauth)
 
-@app.route('/')
-def index():
-    user = session.get('user')
-    return render_template('index.html', user=user)
-
-@app.route('/login')
-def login():
-    try:
-        redirect_uri = os.getenv("OAUTH_REDIRECT_URI")
-        if not redirect_uri:
-            raise RuntimeError("OAUTH_REDIRECT_URI não configurado no .env")
-        return oauth.google.authorize_redirect(redirect_uri)
-    except Exception:
-        logger.exception("Erro ao iniciar o login com Google")
-        return "Erro interno ao tentar logar (veja terminal).", 500
-
-@app.route('/auth')
-def auth():
-    token = oauth.google.authorize_access_token()
-    userinfo = oauth.google.parse_id_token(token)
-    session['user'] = {
-        'id': userinfo.get('sub'),
-        'name': userinfo.get('name'),
-        'email': userinfo.get('email'),
-        'picture': userinfo.get('picture'),
-    }
-    return redirect(url_for('index'))
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('index'))
+# Registra blueprints
+app.register_blueprint(auth_bp, url_prefix='')
+app.register_blueprint(main_bp, url_prefix='')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

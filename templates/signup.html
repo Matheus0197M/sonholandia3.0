@@ -7,10 +7,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
-    <a href="https://lordicon.com/">
-      <!-- Icons by lordincon.com -->
-    </a>
-    <title>Sonholândia</title>
+    <title>Cadastro - Sonholândia</title>
   </head>
 
   <body>
@@ -35,8 +32,8 @@
         </article>
 
         <article class="formLogin">
-          <form action="{{ url_for('auth.loginNormal') }}" method="POST">
-            <h1>Sonholândia</h1>
+          <form action="{{ url_for('auth.signUp') }}" method="POST">
+            <h1>Cadastre-se</h1>
             <br />
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
@@ -47,39 +44,16 @@
                 {% endfor %}
               {% endif %}
             {% endwith %}
-            <input type="text" name="username_or_email" placeholder="Usuário ou email" required />
-            <input type="password" name="password" placeholder="Senha" required />
-            <button type="submit" class="botaoEntrar" style="background: none; border: none; cursor: pointer; width: 100%;">Entrar</button>
-
-            <article class="divDoOU">
-              <h3>
-                OU
-                <!-- svg... -->
-              </h3>
-            </article>
-
-            <a href="{{ url_for('auth.loginAutomatico') }}" class="entrarAutomatico" style="display: block; margin-bottom: 10px; text-align: center; padding: 10px; background: #f0f0f0; border-radius: 5px; text-decoration: none; color: #333;">
-              Login Automático (Teste)
-            </a>
-
-            <a href="{{ url_for('auth.loginWithGoogle') }}" class="entrarGoogle">
-              <!-- svg Google (seu svg) -->
-               <img src="{{ url_for('static', filename='assets/iconGoogleLogin.svg') }}" alt="Google">
-              Entrar com o Google
-            </a>
-
-            <a href="{{ url_for('auth.loginWithFacebook') }}" class="entrarFacebook">
-              <img src="{{ url_for('static', filename='assets/iconFacebookLogin.svg') }}" alt="Facebook">
-              Entrar com o Facebook</a>
-            <a href="{{ url_for('auth.forgotPassword') }}">Esqueceu a senha?</a>
+            <input type="text" name="name" placeholder="Nome completo (opcional)" />
+            <input type="text" name="username" placeholder="Nome de usuário" required />
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Senha (mínimo 6 caracteres)" required minlength="6" />
+            <input type="password" name="confirm_password" placeholder="Confirmar senha" required minlength="6" />
+            <button type="submit" class="botaoEntrar" style="background: none; border: none; cursor: pointer; width: 100%;">Cadastrar</button>
             <br />
             <p>
-              Não tem uma conta?
-              <a href="{{ url_for('auth.signUp') }}" class="botaoCadastrar">
-                Cadastre-se
-                
-                <img src="{{ url_for('static', filename='assets/iconSignUp.svg') }}" alt="User">
-              </a>
+              Já tem uma conta?
+              <a href="{{ url_for('main.index') }}" class="botaoCadastrar">Faça login</a>
             </p>
           </form>
         </article>
@@ -110,7 +84,7 @@
       </section>
     </footer>
 
-    <!-- se você quiser usar um main.js -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
 </html>
+
