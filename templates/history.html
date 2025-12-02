@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feed.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title>Histórico | Sonholândia</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="user-container">
+                <div class="user">
+                    {% if user.picture %}
+                    <img src="{{ user.picture }}" alt="avatar" class="user-avatar">
+                    {% else %}
+                    <div class="user-avatar-placeholder">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    {% endif %}
+                    <p class="user-name">{{ user.name or user.username }}</p>
+                </div>
+            </div>
+            <a href="{{ url_for('main.feed') }}">Feed</a>
+            <a href="{{ url_for('dreams.post_dream') }}" class="linkPostarSonho">Postar um sonho</a>
+            <a href="{{ url_for('main.feed') }}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h1 style="text-align: center; margin: 2rem 0; color: #029ce4;">Seu Histórico</h1>
+            
+            {% if history_items %}
+                {% for item in history_items %}
+                <article class="reveal history-item">
+                    <div class="history-action">
+                        {% if item.action_type == 'view' %}
+                            <i class="bi bi-eye"></i> Você visualizou
+                        {% elif item.action_type == 'like' %}
+                            <i class="bi bi-heart-fill"></i> Você curtiu
+                        {% elif item.action_type == 'favorite' %}
+                            <i class="bi bi-bookmark-fill"></i> Você favoritou
+                        {% elif item.action_type == 'comment' %}
+                            <i class="bi bi-chat"></i> Você comentou
+                        {% else %}
+                            <i class="bi bi-circle"></i> Ação
+                        {% endif %}
+                    </div>
+                    <h3><a href="{{ url_for('dreams.view_dream', dream_id=item.dream_id) }}" class="dream-link">{{ item.title }}</a></h3>
+                    <div class="history-meta">
+                        <span class="dream-type-badge">{{ item.dream_type|title }}</span>
+                        <span class="history-date">{{ item.created_at }}</span>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <article class="reveal">
+                    <h2>Nenhum histórico encontrado</h2>
+                    <p>Seu histórico de navegação aparecerá aqui.</p>
+                </article>
+            {% endif %}
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/feed.js') }}"></script>
+</body>
+</html>
+

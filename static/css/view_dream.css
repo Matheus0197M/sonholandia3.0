@@ -179,6 +179,21 @@ main {
     border: 1px solid #808080;
 }
 
+/* Imagem do Sonho */
+.dream-image-full {
+    margin: 1.5rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 500px;
+}
+
+.dream-image-full img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: cover;
+}
+
 /* Descrição */
 .dream-description {
     margin-bottom: 2rem;
@@ -224,6 +239,110 @@ main {
     gap: 1rem;
     padding-top: 1.5rem;
     border-top: 1px solid #333;
+    flex-wrap: wrap;
+}
+
+.action-btn.liked {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+    border-color: #ff4444;
+}
+
+.action-btn.favorited {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    border-color: #ffd700;
+}
+
+/* Comentários */
+.comments-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #333;
+}
+
+.comments-section h3 {
+    color: #029ce4;
+    margin-bottom: 1.5rem;
+}
+
+.comment-form {
+    margin-bottom: 2rem;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #111;
+    color: white;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1rem;
+    resize: vertical;
+    margin-bottom: 0.5rem;
+}
+
+.comment-form textarea:focus {
+    outline: none;
+    border-color: #029ce4;
+}
+
+.comment-item {
+    background: #111;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #222;
+}
+
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.comment-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-avatar-placeholder {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 156, 228, 0.2);
+    color: #029ce4;
+    font-size: 1.2rem;
+}
+
+.comment-author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-author-info strong {
+    color: #029ce4;
+    font-size: 0.9rem;
+}
+
+.comment-date {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.comment-content {
+    color: #ddd;
+    line-height: 1.6;
+    margin-top: 0.5rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .action-btn {
@@ -239,6 +358,19 @@ main {
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s;
+    text-decoration: none;
+}
+
+.action-btn.edit-btn {
+    background: rgba(2, 156, 228, 0.2);
+    color: #029ce4;
+    border: 1px solid #029ce4;
+}
+
+.action-btn.edit-btn:hover {
+    background: rgba(2, 156, 228, 0.3);
+    color: #51cf66;
+    border-color: #51cf66;
 }
 
 .action-btn:hover {

@@ -131,6 +131,16 @@ a img{
     background: #111;
     color: #fff;
     border: 2px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.botaoEntrar:hover,
+.botaoEntrar:active,
+.botaoEntrar:focus {
+    background: #eee;
+    color: #8b00ff;
+    border-color: #8b00ff;
+    transform: scale(1.05);
 }
 
 .entrarGoogle{
@@ -145,6 +155,17 @@ a img{
 
 .botaoCadastrar{
     margin: 0 18px;
+    transition: all 0.3s ease;
+}
+
+.botaoCadastrar:hover,
+.botaoCadastrar:active,
+.botaoCadastrar:focus {
+    background: #eee;
+    color: #8b00ff;
+    transform: scale(1.05);
+    border-radius: 5px;
+    padding: 8px;
 }
 
 article{

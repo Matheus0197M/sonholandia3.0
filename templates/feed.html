@@ -20,29 +20,53 @@
   <body>
     <header>
       <nav>
-        <button>
+        <div class="user-container">
           <div class="user">
             <!-- mostra foto e nome do usuário se tiver -->
             {% if user %}
+            {% if user.picture %}
             <img
               src="{{ user.picture }}"
               alt="avatar"
-              width="32"
-              style="border-radius: 50%; margin-right: 6px"
+              class="user-avatar"
             />
-            <p>{{ user.name }}</p>
             {% else %}
-            <svg ...>...</svg>
-            <p>User</p>
+            <div class="user-avatar-placeholder">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            {% endif %}
+            <p class="user-name">{{ user.name or user.username }}</p>
+            {% else %}
+            <div class="user-avatar-placeholder">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <p class="user-name">User</p>
             {% endif %}
           </div>
-        </button>
+        </div>
 
         <a href="{{ url_for('main.feed') }}" class="">Feed</a>
-        <input type="search" placeholder="Pesquisar" />
+        <input type="search" id="searchInput" placeholder="Pesquisar" />
         <a href="{{ url_for('dreams.post_dream') }}" class="linkPostarSonho">Postar um sonho</a>
-        <button class="menuFeed">...</button>
-        <a href="{{ url_for('auth.logout') }}" class="logout">Sair</a>
+        <div class="menu-container">
+          <button class="menuFeed" id="menuButton">
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+          <div class="menu-dropdown" id="menuDropdown">
+            <a href="{{ url_for('main.feed', filter='liked') }}" class="menu-item">
+              <i class="bi bi-heart-fill"></i> Curtidos
+            </a>
+            <a href="{{ url_for('main.feed', filter='favorites') }}" class="menu-item">
+              <i class="bi bi-bookmark-fill"></i> Favoritados
+            </a>
+            <a href="{{ url_for('main.history') }}" class="menu-item">
+              <i class="bi bi-clock-history"></i> Histórico
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="menu-item logout-item">
+              <i class="bi bi-box-arrow-right"></i> Sair
+            </a>
+          </div>
+        </div>
       </nav>
     </header>
 
@@ -50,22 +74,39 @@
       <section>
         {% if dreams %}
           {% for dream in dreams %}
-          <article class="reveal" id="sonho">
-            <h2><a href="{{ url_for('dreams.view_dream', dream_id=dream.id) }}" class="dream-link">{{ dream.title }}</a></h2>
-            <p>{{ dream.description[:200] }}{% if dream.description|length > 200 %}...{% endif %}</p>
-            {% if dream.tags_list %}
-            <article class="hashtags">
-              {% for tag in dream.tags_list %}
-              <a href="{{ url_for('main.feed') }}?tag={{ tag }}" class="tagsEngajamento">#{{ tag }}</a>
-              {% endfor %}
-            </article>
-            {% endif %}
-            <div class="dream-meta">
-              <span class="dream-type-badge">{{ dream.dream_type|title }}</span>
-              <span class="dream-author-name">{{ dream.name or dream.username }}</span>
+          <article class="reveal dream-card" data-dream-id="{{ dream.id }}">
+            <div class="dream-preview">
+              <h2><a href="#" class="dream-link expand-dream" data-dream-id="{{ dream.id }}">{{ dream.title }}</a></h2>
+              <p class="dream-preview-text">{{ dream.description[:200] }}{% if dream.description|length > 200 %}...{% endif %}</p>
+              {% if dream.image_path %}
+              <div class="dream-image-preview">
+                <img src="{{ url_for('static', filename=dream.image_path) }}" alt="{{ dream.title }}" />
+              </div>
+              {% endif %}
+              {% if dream.tags_list %}
+              <article class="hashtags">
+                {% for tag in dream.tags_list %}
+                <a href="{{ url_for('main.feed') }}?tag={{ tag }}" class="tagsEngajamento">#{{ tag }}</a>
+                {% endfor %}
+              </article>
+              {% endif %}
+              <div class="dream-meta">
+                <span class="dream-type-badge">{{ dream.dream_type|title }}</span>
+                <span class="dream-author-name">{{ dream.name or dream.username }}</span>
+              </div>
+              <div class="buttonsDreams">
+                <button class="verMaisDentro expand-dream-btn" data-dream-id="{{ dream.id }}">Ver mais</button>
+                <button class="action-btn like-btn" data-dream-id="{{ dream.id }}" data-liked="{{ 'true' if dream.is_liked else 'false' }}">
+                  <i class="bi bi-heart{% if dream.is_liked %}-fill{% endif %}"></i>
+                  <span class="like-count">{{ dream.like_count or 0 }}</span>
+                </button>
+                <button class="action-btn favorite-btn" data-dream-id="{{ dream.id }}" data-favorited="{{ 'true' if dream.is_favorited else 'false' }}">
+                  <i class="bi bi-bookmark{% if dream.is_favorited %}-fill{% endif %}"></i>
+                </button>
+              </div>
             </div>
-            <div class="buttonsDreams">
-              <a href="{{ url_for('dreams.view_dream', dream_id=dream.id) }}" class="verMaisDentro">Ver mais</a>
+            <div class="dream-full" style="display: none;">
+              <!-- Conteúdo completo será carregado via AJAX -->
             </div>
           </article>
           {% endfor %}
@@ -78,10 +119,39 @@
             </div>
           </article>
         {% endif %}
-        {% if tag_filter %}
+        {% if tag_filter or search_query or filter_type %}
         <div class="filter-info">
-          <p>Filtrando por: <strong>#{{ tag_filter }}</strong></p>
-          <a href="{{ url_for('main.feed') }}" class="clear-filter">Limpar filtro</a>
+          {% if tag_filter %}
+          <p>Filtrando por tag: <strong>#{{ tag_filter }}</strong></p>
+          {% endif %}
+          {% if search_query %}
+          <p>Buscando: <strong>{{ search_query }}</strong></p>
+          {% endif %}
+          {% if filter_type == 'liked' %}
+          <p>Mostrando: <strong>Sonhos Curtidos</strong></p>
+          {% elif filter_type == 'favorites' %}
+          <p>Mostrando: <strong>Sonhos Favoritados</strong></p>
+          {% endif %}
+          <a href="{{ url_for('main.feed') }}" class="clear-filter">Limpar filtros</a>
+        </div>
+        {% endif %}
+        
+        <!-- Paginação -->
+        {% if total_pages > 1 %}
+        <div class="pagination">
+          {% if page > 1 %}
+          <a href="{{ url_for('main.feed', page=page-1, tag=tag_filter, search=search_query, filter=filter_type) }}" class="page-link">
+            <i class="bi bi-chevron-left"></i> Anterior
+          </a>
+          {% endif %}
+          
+          <span class="page-info">Página {{ page }} de {{ total_pages }}</span>
+          
+          {% if page < total_pages %}
+          <a href="{{ url_for('main.feed', page=page+1, tag=tag_filter, search=search_query, filter=filter_type) }}" class="page-link">
+            Próxima <i class="bi bi-chevron-right"></i>
+          </a>
+          {% endif %}
         </div>
         {% endif %}
       </section>

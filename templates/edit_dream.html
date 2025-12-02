@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/post_dream.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <title>Postar Sonho | Sonholândia</title>
+    <title>Editar Sonho | Sonholândia</title>
 </head>
 <body>
     <header>
         <nav>
-            <a href="{{ url_for('main.feed') }}" class="back-link">
-                <i class="bi bi-arrow-left"></i> Voltar ao Feed
+            <a href="{{ url_for('dreams.view_dream', dream_id=dream.id) }}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Voltar
             </a>
         </nav>
     </header>
 
     <main>
         <section class="post-container">
-            <h1>Postar um Sonho</h1>
+            <h1>Editar Sonho</h1>
             
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -30,7 +30,7 @@
                 {% endif %}
             {% endwith %}
 
-            <form id="dreamForm" action="{{ url_for('dreams.post_dream') }}" method="POST" enctype="multipart/form-data">
+            <form id="dreamForm" action="{{ url_for('dreams.edit_dream', dream_id=dream.id) }}" method="POST" enctype="multipart/form-data">
                 <!-- Barra de Progresso -->
                 <div class="progress-container">
                     <div class="progress-bar">
@@ -46,7 +46,7 @@
                         type="text" 
                         id="title" 
                         name="title" 
-                        placeholder="Ex: Sonhei que estava voando..."
+                        value="{{ dream.title }}"
                         required
                         maxlength="100"
                     >
@@ -59,11 +59,10 @@
                         id="description" 
                         name="description" 
                         rows="8" 
-                        placeholder="Descreva seu sonho em detalhes..."
                         required
                         maxlength="5000"
-                    ></textarea>
-                    <span class="char-count"><span id="charCount">0</span>/5000</span>
+                    >{{ dream.description }}</textarea>
+                    <span class="char-count"><span id="charCount">{{ dream.description|length }}</span>/5000</span>
                 </div>
 
                 <!-- Tipo de Sonho -->
@@ -71,14 +70,14 @@
                     <label for="dream_type">Tipo de Sonho *</label>
                     <select id="dream_type" name="dream_type" required>
                         <option value="">Selecione o tipo...</option>
-                        <option value="lucido">Lúcido</option>
-                        <option value="molhado">Molhado</option>
-                        <option value="pesadelo">Pesadelo</option>
-                        <option value="recorrente">Recorrente</option>
-                        <option value="vivido">Vivido</option>
-                        <option value="estranho">Estranho</option>
-                        <option value="agradavel">Agradável</option>
-                        <option value="outro">Outro</option>
+                        <option value="lucido" {% if dream.dream_type == 'lucido' %}selected{% endif %}>Lúcido</option>
+                        <option value="molhado" {% if dream.dream_type == 'molhado' %}selected{% endif %}>Molhado</option>
+                        <option value="pesadelo" {% if dream.dream_type == 'pesadelo' %}selected{% endif %}>Pesadelo</option>
+                        <option value="recorrente" {% if dream.dream_type == 'recorrente' %}selected{% endif %}>Recorrente</option>
+                        <option value="vivido" {% if dream.dream_type == 'vivido' %}selected{% endif %}>Vivido</option>
+                        <option value="estranho" {% if dream.dream_type == 'estranho' %}selected{% endif %}>Estranho</option>
+                        <option value="agradavel" {% if dream.dream_type == 'agradavel' %}selected{% endif %}>Agradável</option>
+                        <option value="outro" {% if dream.dream_type == 'outro' %}selected{% endif %}>Outro</option>
                     </select>
                 </div>
 
@@ -89,7 +88,8 @@
                         type="text" 
                         id="tags" 
                         name="tags" 
-                        placeholder="Ex: #casa #familia #aventura (separadas por espaço ou vírgula)"
+                        value="{% for tag in tags %}#{{ tag }} {% endfor %}"
+                        placeholder="Ex: #casa #familia #aventura"
                     >
                     <small class="help-text">Separe as tags por espaço ou vírgula. O símbolo # será adicionado automaticamente.</small>
                 </div>
@@ -97,23 +97,32 @@
                 <!-- Imagem -->
                 <div class="form-group">
                     <label for="image">Imagem do Sonho (Opcional)</label>
+                    {% if dream.image_path %}
+                    <div style="margin-bottom: 1rem;">
+                        <p>Imagem atual:</p>
+                        <img src="{{ url_for('static', filename=dream.image_path) }}" alt="Imagem atual" style="max-width: 200px; border-radius: 8px;">
+                    </div>
+                    {% endif %}
                     <input 
                         type="file" 
                         id="image" 
                         name="image" 
                         accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
                     >
-                    <small class="help-text">Formatos aceitos: PNG, JPG, JPEG, GIF, WEBP (máx. 5MB)</small>
+                    <small class="help-text">Deixe em branco para manter a imagem atual. Formatos aceitos: PNG, JPG, JPEG, GIF, WEBP (máx. 5MB)</small>
                     <div id="imagePreview" class="image-preview"></div>
                 </div>
 
                 <!-- Botões -->
                 <div class="form-actions">
-                    <button type="button" class="btn-cancel" onclick="window.location.href='{{ url_for('main.feed') }}'">
+                    <button type="button" class="btn-cancel" onclick="window.location.href='{{ url_for('dreams.view_dream', dream_id=dream.id) }}'">
                         Cancelar
                     </button>
+                    <button type="button" class="btn-delete" onclick="deleteDream({{ dream.id }})">
+                        <i class="bi bi-trash"></i> Deletar
+                    </button>
                     <button type="submit" class="btn-submit" id="submitBtn">
-                        <i class="bi bi-send"></i> Postar Sonho
+                        <i class="bi bi-save"></i> Salvar Alterações
                     </button>
                 </div>
             </form>
@@ -121,7 +130,30 @@
     </main>
 
     <script src="{{ url_for('static', filename='js/post_dream.js') }}"></script>
+    <script>
+        function deleteDream(dreamId) {
+            if (confirm('Tem certeza que deseja deletar este sonho? Esta ação não pode ser desfeita.')) {
+                fetch(`/deletar-sonho/${dreamId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/feed';
+                    } else {
+                        alert('Erro ao deletar sonho: ' + (data.error || 'Erro desconhecido'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao deletar sonho. Tente novamente.');
+                });
+            }
+        }
+    </script>
 </body>
 </html>
-
 

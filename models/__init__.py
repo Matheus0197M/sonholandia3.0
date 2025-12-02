@@ -52,10 +52,70 @@ def init_db():
             description TEXT NOT NULL,
             dream_type TEXT NOT NULL,
             tags TEXT,
+            image_path TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     ''')
+    
+    # Tabela de curtidas
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS likes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            dream_id INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, dream_id),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (dream_id) REFERENCES dreams(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Tabela de favoritos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS favorites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            dream_id INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, dream_id),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (dream_id) REFERENCES dreams(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Tabela de comentários
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            dream_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (dream_id) REFERENCES dreams(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Tabela de histórico de navegação
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            dream_id INTEGER NOT NULL,
+            action_type TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (dream_id) REFERENCES dreams(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Índices para melhor performance
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_likes_dream ON likes(dream_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_comments_dream ON comments(dream_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_history_user ON history(user_id)')
     
     conn.commit()
     conn.close()

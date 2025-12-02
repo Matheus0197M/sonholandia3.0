@@ -62,6 +62,13 @@
                 </span>
             </div>
 
+            <!-- Imagem do Sonho -->
+            {% if dream.image_path %}
+            <div class="dream-image-full">
+                <img src="{{ url_for('static', filename=dream.image_path) }}" alt="{{ dream.title }}" />
+            </div>
+            {% endif %}
+
             <!-- Descrição -->
             <div class="dream-description">
                 {{ dream.description|replace('\n', '<br>')|safe }}
@@ -80,15 +87,32 @@
 
             <!-- Ações -->
             <div class="dream-actions">
-                <button class="action-btn like-btn">
-                    <i class="bi bi-heart"></i> Curtir
+                <button class="action-btn like-btn" data-dream-id="{{ dream.id }}" data-liked="false">
+                    <i class="bi bi-heart"></i> <span class="like-count">0</span>
                 </button>
-                <button class="action-btn comment-btn">
+                <button class="action-btn comment-btn" id="toggleComments">
                     <i class="bi bi-chat"></i> Comentar
                 </button>
-                <button class="action-btn favorite-btn">
+                <button class="action-btn favorite-btn" data-dream-id="{{ dream.id }}" data-favorited="false">
                     <i class="bi bi-bookmark"></i> Favoritar
                 </button>
+                {% if user.id == dream.user_id %}
+                <a href="{{ url_for('dreams.edit_dream', dream_id=dream.id) }}" class="action-btn edit-btn">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Seção de Comentários -->
+            <div class="comments-section" id="commentsSection" style="display: none;">
+                <h3>Comentários</h3>
+                <div class="comment-form">
+                    <textarea id="commentInput" placeholder="Escreva um comentário..." rows="3"></textarea>
+                    <button class="btn-submit" id="submitComment" data-dream-id="{{ dream.id }}">Comentar</button>
+                </div>
+                <div class="comments-list" id="commentsList">
+                    <!-- Comentários serão carregados aqui -->
+                </div>
             </div>
         </article>
     </main>

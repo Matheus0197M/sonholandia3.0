@@ -23,30 +23,65 @@ def feed():
     conn = get_db()
     cursor = conn.cursor()
     
-    # Filtro por tag se fornecido
+    # Filtros
     tag_filter = request.args.get('tag', '').strip()
+    search_query = request.args.get('search', '').strip()
+    filter_type = request.args.get('filter', '').strip()
+    page = int(request.args.get('page', 1))
+    per_page = 10
+    offset = (page - 1) * per_page
+    
+    # Query base
+    query = '''
+        SELECT d.*, u.username, u.name, u.picture,
+               (SELECT COUNT(*) FROM likes WHERE dream_id = d.id) as like_count,
+               (SELECT COUNT(*) FROM likes WHERE dream_id = d.id AND user_id = ?) > 0 as is_liked,
+               (SELECT COUNT(*) FROM favorites WHERE dream_id = d.id AND user_id = ?) > 0 as is_favorited
+        FROM dreams d
+        JOIN users u ON d.user_id = u.id
+    '''
+    params = [user['id'], user['id']]
+    
+    # Aplica filtros
+    conditions = []
+    
+    if filter_type == 'liked':
+        conditions.append('d.id IN (SELECT dream_id FROM likes WHERE user_id = ?)')
+        params.insert(0, user['id'])
+    elif filter_type == 'favorites':
+        conditions.append('d.id IN (SELECT dream_id FROM favorites WHERE user_id = ?)')
+        params.insert(0, user['id'])
     
     if tag_filter:
-        # Busca sonhos que contenham a tag
-        cursor.execute('''
-            SELECT d.*, u.username, u.name, u.picture 
-            FROM dreams d
-            JOIN users u ON d.user_id = u.id
-            WHERE d.tags LIKE ?
-            ORDER BY d.created_at DESC
-            LIMIT 50
-        ''', (f'%"{tag_filter}"%',))
-    else:
-        # Busca todos os sonhos
-        cursor.execute('''
-            SELECT d.*, u.username, u.name, u.picture 
-            FROM dreams d
-            JOIN users u ON d.user_id = u.id
-            ORDER BY d.created_at DESC
-            LIMIT 50
-        ''')
+        conditions.append('d.tags LIKE ?')
+        params.append(f'%"{tag_filter}"%')
     
+    if search_query:
+        conditions.append('(d.title LIKE ? OR d.description LIKE ?)')
+        search_param = f'%{search_query}%'
+        params.extend([search_param, search_param])
+    
+    if conditions:
+        query += ' WHERE ' + ' AND '.join(conditions)
+    
+    query += ' ORDER BY d.created_at DESC LIMIT ? OFFSET ?'
+    params.extend([per_page, offset])
+    
+    cursor.execute(query, params)
     dreams = cursor.fetchall()
+    
+    # Conta total para paginação
+    count_query = 'SELECT COUNT(*) as total FROM dreams d'
+    if conditions:
+        count_query += ' WHERE ' + ' AND '.join(conditions)
+        count_params = params[:-2]  # Remove LIMIT e OFFSET
+    else:
+        count_params = []
+    
+    cursor.execute(count_query, count_params)
+    total = cursor.fetchone()['total']
+    total_pages = (total + per_page - 1) // per_page
+    
     conn.close()
     
     # Processa tags para cada sonho
@@ -63,5 +98,12 @@ def feed():
         dream_dict['tags_list'] = tags
         dreams_list.append(dream_dict)
     
-    return render_template('feed.html', user=user, dreams=dreams_list, tag_filter=tag_filter)
+    return render_template('feed.html', 
+                         user=user, 
+                         dreams=dreams_list, 
+                         tag_filter=tag_filter,
+                         search_query=search_query,
+                         filter_type=filter_type,
+                         page=page,
+                         total_pages=total_pages)
 
