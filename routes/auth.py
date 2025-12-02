@@ -42,9 +42,6 @@ def loginNormal():
             return redirect(url_for('main.index'))
     
     return redirect(url_for('main.index'))
-
-@auth_bp.route('/loginAutomatico')
-def loginAutomatico():
     """Rota para login automático (login de teste/demo)"""
     conn = get_db()
     cursor = conn.cursor()

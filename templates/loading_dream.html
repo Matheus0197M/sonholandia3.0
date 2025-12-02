@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading_dream.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title>Processando Sonho | Sonholândia</title>
+</head>
+<body>
+    <main class="loading-container">
+        <div class="loading-content">
+            <div class="spinner">
+                <i class="bi bi-moon-stars"></i>
+            </div>
+            <h1>Processando seu sonho...</h1>
+            <p>Aguarde enquanto salvamos todas as informações no banco de dados.</p>
+            <div class="loading-bar">
+                <div class="loading-fill" id="loadingFill"></div>
+            </div>
+            <p class="loading-status" id="loadingStatus">Iniciando processo...</p>
+        </div>
+    </main>
+
+    <script>
+        const dreamId = {{ dream_id }};
+        const checkUrl = "{{ url_for('dreams.check_dream', dream_id=dream_id) }}";
+        const viewUrl = "{{ url_for('dreams.view_dream', dream_id=dream_id) }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/loading_dream.js') }}"></script>
+</body>
+</html>
+

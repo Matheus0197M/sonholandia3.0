@@ -154,6 +154,68 @@ main{
     color: rgb(0, 132, 255);
     letter-spacing: 1px;
     font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.verMaisDentro:hover {
+    background: #666;
+    transform: translateY(-2px);
+}
+
+.dream-link {
+    color: #029ce4;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.dream-link:hover {
+    color: #51cf66;
+}
+
+.dream-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.dream-type-badge {
+    background: rgba(2, 156, 228, 0.2);
+    color: #029ce4;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.dream-author-name {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.filter-info {
+    background: #0f1623;
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.clear-filter {
+    color: #ff4444;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.3s;
+}
+
+.clear-filter:hover {
+    opacity: 0.8;
 }
 
 /* FOOTER */

@@ -40,7 +40,7 @@
 
         <a href="{{ url_for('main.feed') }}" class="">Feed</a>
         <input type="search" placeholder="Pesquisar" />
-        <a href="#" class="linkPostarSonho">Postar um sonho</a>
+        <a href="{{ url_for('dreams.post_dream') }}" class="linkPostarSonho">Postar um sonho</a>
         <button class="menuFeed">...</button>
         <a href="{{ url_for('auth.logout') }}" class="logout">Sair</a>
       </nav>
@@ -48,16 +48,42 @@
 
     <main>
       <section>
-        <!-- repetição de artigos demo -->
-        <article class="reveal" id="sonho">
-          <h2>Título</h2>
-          <p>Sonhei que havia um gorila ...</p>
-          <article class="hashtags">
-            <a href="" class="tagsEngajamento">#casa</a>
+        {% if dreams %}
+          {% for dream in dreams %}
+          <article class="reveal" id="sonho">
+            <h2><a href="{{ url_for('dreams.view_dream', dream_id=dream.id) }}" class="dream-link">{{ dream.title }}</a></h2>
+            <p>{{ dream.description[:200] }}{% if dream.description|length > 200 %}...{% endif %}</p>
+            {% if dream.tags_list %}
+            <article class="hashtags">
+              {% for tag in dream.tags_list %}
+              <a href="{{ url_for('main.feed') }}?tag={{ tag }}" class="tagsEngajamento">#{{ tag }}</a>
+              {% endfor %}
+            </article>
+            {% endif %}
+            <div class="dream-meta">
+              <span class="dream-type-badge">{{ dream.dream_type|title }}</span>
+              <span class="dream-author-name">{{ dream.name or dream.username }}</span>
+            </div>
+            <div class="buttonsDreams">
+              <a href="{{ url_for('dreams.view_dream', dream_id=dream.id) }}" class="verMaisDentro">Ver mais</a>
+            </div>
           </article>
-        </article>
-        <!-- ... outros artigos ... -->
-        <button class="verMaisVarios">Ver mais sonhos</button>
+          {% endfor %}
+        {% else %}
+          <article class="reveal" id="sonho">
+            <h2>Nenhum sonho encontrado</h2>
+            <p>Seja o primeiro a postar um sonho!</p>
+            <div class="buttonsDreams">
+              <a href="{{ url_for('dreams.post_dream') }}" class="verMaisDentro">Postar um sonho</a>
+            </div>
+          </article>
+        {% endif %}
+        {% if tag_filter %}
+        <div class="filter-info">
+          <p>Filtrando por: <strong>#{{ tag_filter }}</strong></p>
+          <a href="{{ url_for('main.feed') }}" class="clear-filter">Limpar filtro</a>
+        </div>
+        {% endif %}
       </section>
     </main>
 

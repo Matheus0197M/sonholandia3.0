@@ -4,7 +4,7 @@ from flask import Flask
 
 from config import Config
 from models import init_db
-from routes import auth_bp, main_bp
+from routes import auth_bp, main_bp, dreams_bp
 from routes.oauth import init_oauth, set_oauth
 from utils import setup_ssl
 
@@ -32,6 +32,7 @@ set_oauth(oauth)
 # Registra blueprints
 app.register_blueprint(auth_bp, url_prefix='')
 app.register_blueprint(main_bp, url_prefix='')
+app.register_blueprint(dreams_bp, url_prefix='')
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)

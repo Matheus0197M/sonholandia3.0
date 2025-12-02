@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Story+Script&family=Varela+Round&display=swap');
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: #080441;
+    font-family: 'Varela Round', sans-serif;
+    color: white;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    background: #0f1623;
+    height: 10dvh;
+}
+
+nav {
+    display: flex;
+    gap: 2rem;
+    margin: 0 2rem;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: space-between;
+}
+
+.back-link,
+.feed-link {
+    color: #029ce4;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    transition: opacity 0.3s;
+}
+
+.back-link:hover,
+.feed-link:hover {
+    opacity: 0.8;
+}
+
+/* Main */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+    min-height: 90vh;
+}
+
+.dream-view {
+    background: #0f1623;
+    border-radius: 15px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 900px;
+    border: 1px solid #111;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* Cabeçalho do Sonho */
+.dream-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #333;
+}
+
+.dream-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-avatar-placeholder {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #888;
+}
+
+.author-info h3 {
+    color: #029ce4;
+    margin-bottom: 0.25rem;
+}
+
+.dream-date {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Título */
+.dream-title {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+/* Tipo de Sonho */
+.dream-type {
+    margin-bottom: 1.5rem;
+}
+
+.type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.type-lucido {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    border: 1px solid #ffd700;
+}
+
+.type-molhado {
+    background: rgba(0, 150, 255, 0.2);
+    color: #0096ff;
+    border: 1px solid #0096ff;
+}
+
+.type-pesadelo {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    border: 1px solid #ff4444;
+}
+
+.type-recorrente {
+    background: rgba(138, 43, 226, 0.2);
+    color: #8a2be2;
+    border: 1px solid #8a2be2;
+}
+
+.type-vivido {
+    background: rgba(255, 165, 0, 0.2);
+    color: #ffa500;
+    border: 1px solid #ffa500;
+}
+
+.type-estranho {
+    background: rgba(128, 0, 128, 0.2);
+    color: #800080;
+    border: 1px solid #800080;
+}
+
+.type-agradavel {
+    background: rgba(0, 255, 0, 0.2);
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+
+.type-outro {
+    background: rgba(128, 128, 128, 0.2);
+    color: #808080;
+    border: 1px solid #808080;
+}
+
+/* Descrição */
+.dream-description {
+    margin-bottom: 2rem;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #ddd;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.dream-description p {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Tags */
+.dream-tags {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-link {
+    color: #029ce4;
+    background: #26006d;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.tag-link:hover {
+    background: #029ce4;
+    color: #111;
+    transform: translateY(-2px);
+}
+
+/* Ações */
+.dream-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #333;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    background: #222;
+    color: white;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+}
+
+.like-btn:hover {
+    color: #ff4444;
+}
+
+.comment-btn:hover {
+    color: #029ce4;
+}
+
+.favorite-btn:hover {
+    color: #ffd700;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .dream-view {
+        padding: 1.5rem;
+    }
+
+    .dream-title {
+        font-size: 1.8rem;
+    }
+
+    .dream-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

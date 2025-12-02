@@ -43,6 +43,20 @@ def init_db():
         )
     ''')
     
+    # Tabela de sonhos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS dreams (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            dream_type TEXT NOT NULL,
+            tags TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 

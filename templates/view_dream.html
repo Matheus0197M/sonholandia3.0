@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view_dream.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title>{{ dream.title }} | Sonholândia</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('main.feed') }}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Voltar ao Feed
+            </a>
+            <a href="{{ url_for('main.feed') }}" class="feed-link">Feed</a>
+        </nav>
+    </header>
+
+    <main>
+        <article class="dream-view">
+            <!-- Cabeçalho do Sonho -->
+            <header class="dream-header">
+                <div class="dream-author">
+                    {% if dream.picture %}
+                    <img src="{{ dream.picture }}" alt="{{ dream.name }}" class="author-avatar">
+                    {% else %}
+                    <div class="author-avatar-placeholder">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    {% endif %}
+                    <div class="author-info">
+                        <h3>{{ dream.name or dream.username }}</h3>
+                        <span class="dream-date">{{ dream.created_at }}</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Título -->
+            <h1 class="dream-title">{{ dream.title }}</h1>
+
+            <!-- Tipo de Sonho -->
+            <div class="dream-type">
+                <span class="type-badge type-{{ dream.dream_type }}">
+                    {% if dream.dream_type == 'lucido' %}
+                        <i class="bi bi-lightbulb"></i> Lúcido
+                    {% elif dream.dream_type == 'molhado' %}
+                        <i class="bi bi-droplet"></i> Molhado
+                    {% elif dream.dream_type == 'pesadelo' %}
+                        <i class="bi bi-exclamation-triangle"></i> Pesadelo
+                    {% elif dream.dream_type == 'recorrente' %}
+                        <i class="bi bi-arrow-repeat"></i> Recorrente
+                    {% elif dream.dream_type == 'vivido' %}
+                        <i class="bi bi-star"></i> Vivido
+                    {% elif dream.dream_type == 'estranho' %}
+                        <i class="bi bi-question-circle"></i> Estranho
+                    {% elif dream.dream_type == 'agradavel' %}
+                        <i class="bi bi-emoji-smile"></i> Agradável
+                    {% else %}
+                        <i class="bi bi-circle"></i> {{ dream.dream_type|title }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Descrição -->
+            <div class="dream-description">
+                {{ dream.description|replace('\n', '<br>')|safe }}
+            </div>
+
+            <!-- Tags -->
+            {% if tags %}
+            <div class="dream-tags">
+                {% for tag in tags %}
+                <a href="{{ url_for('main.feed') }}?tag={{ tag }}" class="tag-link">
+                    #{{ tag }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Ações -->
+            <div class="dream-actions">
+                <button class="action-btn like-btn">
+                    <i class="bi bi-heart"></i> Curtir
+                </button>
+                <button class="action-btn comment-btn">
+                    <i class="bi bi-chat"></i> Comentar
+                </button>
+                <button class="action-btn favorite-btn">
+                    <i class="bi bi-bookmark"></i> Favoritar
+                </button>
+            </div>
+        </article>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/view_dream.js') }}"></script>
+</body>
+</html>
+
