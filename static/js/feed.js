@@ -20,18 +20,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Expansão de Sonhos
-    const expandButtons = document.querySelectorAll('.expand-dream-btn, .expand-dream');
+    const expandButtons = document.querySelectorAll('.expand-dream-btn');
     
     expandButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             const dreamId = this.getAttribute('data-dream-id');
+            if (!dreamId) return;
+            
             const dreamCard = document.querySelector(`.dream-card[data-dream-id="${dreamId}"]`);
             
-            if (!dreamCard) return;
+            if (!dreamCard) {
+                console.error('Card do sonho não encontrado:', dreamId);
+                // Redireciona para página completa se o card não for encontrado
+                window.location.href = `/sonho/${dreamId}`;
+                return;
+            }
             
             const preview = dreamCard.querySelector('.dream-preview');
             const full = dreamCard.querySelector('.dream-full');
+            
+            if (!preview || !full) {
+                console.error('Elementos do card não encontrados');
+                return;
+            }
             
             if (dreamCard.classList.contains('expanded')) {
                 // Recolhe
@@ -42,42 +55,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Expande
                 if (!full.hasAttribute('data-loaded')) {
                     // Carrega conteúdo completo via AJAX
-                    loadDreamFull(dreamId, full);
+                    loadDreamFull(dreamId, full, dreamCard, preview);
                 } else {
                     full.style.display = 'block';
+                    preview.style.display = 'none';
                 }
                 dreamCard.classList.add('expanded');
-                preview.style.display = 'none';
                 
                 // Scroll suave para o sonho expandido
-                dreamCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    dreamCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             }
         });
     });
     
     // Função para carregar conteúdo completo do sonho
-    function loadDreamFull(dreamId, container) {
+    function loadDreamFull(dreamId, container, dreamCard, preview) {
         container.innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="bi bi-hourglass-split" style="font-size: 2rem; color: #029ce4;"></i><p>Carregando...</p></div>';
+        container.style.display = 'block';
+        preview.style.display = 'none';
         
         fetch(`/sonho/${dreamId}/json`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.success) {
+                if (data.success && data.dream) {
                     let html = '';
                     
+                    // Título completo
+                    html += `<h2 class="dream-full-title">${data.dream.title}</h2>`;
+                    
+                    // Imagem completa se houver
                     if (data.dream.image_path) {
-                        html += `<div class="dream-full-image"><img src="/static/${data.dream.image_path}" alt="${data.dream.title}" /></div>`;
+                        const imagePath = data.dream.image_path.startsWith('/static/') ? data.dream.image_path : '/static/' + data.dream.image_path;
+                        html += `<div class="dream-full-image"><img src="${imagePath}" alt="${data.dream.title}" /></div>`;
                     }
                     
+                    // Descrição completa
                     html += `<div class="dream-full-content">${data.dream.description.replace(/\n/g, '<br>')}</div>`;
                     
+                    // Tags se houver
                     if (data.tags && data.tags.length > 0) {
                         html += '<div class="dream-tags-full">';
                         data.tags.forEach(tag => {
-                            html += `<a href="/feed?tag=${tag}" class="tagsEngajamento">#${tag}</a>`;
+                            html += `<a href="/feed?tag=${encodeURIComponent(tag)}" class="tagsEngajamento">#${tag}</a>`;
                         });
                         html += '</div>';
                     }
+                    
+                    // Botão para ver página completa
+                    html += `<div style="margin-top: 1rem; text-align: center;"><a href="/sonho/${dreamId}" class="verMaisDentro">Ver página completa</a></div>`;
                     
                     container.innerHTML = html;
                     container.setAttribute('data-loaded', 'true');
@@ -85,12 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Registra no histórico
                     registerHistory(dreamId, 'view');
                 } else {
-                    container.innerHTML = '<p style="color: #ff4444;">Erro ao carregar sonho.</p>';
+                    container.innerHTML = '<p style="color: #ff4444; padding: 2rem; text-align: center;">Erro ao carregar sonho. <a href="/sonho/' + dreamId + '">Tentar página completa</a></p>';
+                    preview.style.display = 'block';
+                    container.style.display = 'none';
+                    dreamCard.classList.remove('expanded');
                 }
             })
             .catch(error => {
                 console.error('Erro ao carregar sonho:', error);
-                container.innerHTML = '<p style="color: #ff4444;">Erro ao carregar sonho.</p>';
+                container.innerHTML = '<p style="color: #ff4444; padding: 2rem; text-align: center;">Erro ao carregar sonho. <a href="/sonho/' + dreamId + '">Clique aqui para ver a página completa</a></p>';
+                preview.style.display = 'block';
+                container.style.display = 'none';
+                dreamCard.classList.remove('expanded');
             });
     }
     

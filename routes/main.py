@@ -1,5 +1,5 @@
 """Rotas principais da aplicação"""
-from flask import render_template, session, redirect, url_for, request
+from flask import render_template, session, redirect, url_for, request, jsonify
 import json
 from models import get_db
 from . import main_bp
@@ -106,4 +106,18 @@ def feed():
                          filter_type=filter_type,
                          page=page,
                          total_pages=total_pages)
+
+@main_bp.route('/admin/reset-db', methods=['POST'])
+def reset_database():
+    """Rota administrativa para resetar o banco de dados completamente"""
+    from models import reset_database as reset_db
+    
+    try:
+        reset_db()
+        return jsonify({'success': True, 'message': 'Banco de dados resetado com sucesso!'})
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Erro ao resetar banco: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 

@@ -221,3 +221,26 @@ def logout():
     flash('Você foi desconectado com sucesso.', 'info')
     return redirect(url_for('main.index'))
 
+@auth_bp.route('/blog')
+def blog():
+    return render_template('blog.html')
+
+
+@auth_bp.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@auth_bp.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+
+@auth_bp.route('/nossoApp')
+def nossoApp():
+    return render_template('nossoApp.html')
+
+@auth_bp.route('/nossaIA')
+def nossaIA():
+    return render_template('nossaIA.html')
+

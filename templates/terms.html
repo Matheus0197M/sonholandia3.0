@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icons8-cérebro-48.ico') }}">
+    <title>Termos de Uso | Sonholândia</title>
+</head>
+<body>
+    <main>
+        <section class="sectionPrincipal">
+            <article class="formLogin" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+                <h1>Termos de Uso</h1>
+                
+                <div style="margin-top: 2rem; line-height: 1.8; color: #999;">
+                    <h2>1. Aceitação dos Termos</h2>
+                    <p>
+                        Ao acessar e usar a Sonholândia, você concorda em cumprir e estar vinculado 
+                        a estes Termos de Uso.
+                    </p>
+                    
+                    <h2 style="margin-top: 2rem;">2. Uso da Plataforma</h2>
+                    <p>
+                        A Sonholândia é uma plataforma para compartilhamento de sonhos. Ao usar nossa 
+                        plataforma, você concorda em:
+                    </p>
+                    <ul style="margin-left: 2rem; line-height: 2; margin-top: 1rem;">
+                        <li>Não compartilhar conteúdo ofensivo, ilegal ou inadequado</li>
+                        <li>Respeitar a privacidade de outros usuários</li>
+                        <li>Não usar a plataforma para atividades maliciosas</li>
+                        <li>Ser responsável pelo conteúdo que você compartilha</li>
+                    </ul>
+                    
+                    <h2 style="margin-top: 2rem;">3. Privacidade</h2>
+                    <p>
+                        Valorizamos sua privacidade. As informações que você compartilha serão tratadas 
+                        de acordo com nossa Política de Privacidade.
+                    </p>
+                    
+                    <h2 style="margin-top: 2rem;">4. Conteúdo do Usuário</h2>
+                    <p>
+                        Você mantém todos os direitos sobre o conteúdo que compartilha. Ao compartilhar 
+                        conteúdo na Sonholândia, você nos concede permissão para exibi-lo na plataforma.
+                    </p>
+                    
+                    <h2 style="margin-top: 2rem;">5. Modificações</h2>
+                    <p>
+                        Reservamos o direito de modificar estes termos a qualquer momento. Alterações 
+                        significativas serão comunicadas aos usuários.
+                    </p>
+                    
+                    <p style="margin-top: 2rem; font-size: 0.9em; color: #666;">
+                        Última atualização: Dezembro de 2025
+                    </p>
+                </div>
+                
+                <div style="margin-top: 3rem; text-align: center;">
+                    <a href="{{ url_for('main.index') }}" style="color: #029ce4; text-decoration: none; font-weight: bold;">
+                        ← Voltar para a página inicial
+                    </a>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <section>
+            <header>
+                <nav>
+                    <a href="{{ url_for('auth.about') }}">Sobre</a>
+                    <a href="{{ url_for('auth.blog') }}">Blog</a>
+                    <a href="{{ url_for('auth.terms') }}">Termos</a>
+                    <a href="{{ url_for('auth.nossoApp') }}">Nosso App</a>
+                    <a href="{{ url_for('auth.nossaIA') }}">Nossa IA</a>
+                </nav>
+            </header>
+            <article>
+                <span class="copyright">Golden Boy | Copyright © Sonholândia | 2025</span>
+            </article>
+        </section>
+    </footer>
+</body>
+</html>

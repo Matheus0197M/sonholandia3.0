@@ -30,3 +30,5 @@ def history():
     
     return render_template('history.html', user=user, history_items=history_items)
 
+
+

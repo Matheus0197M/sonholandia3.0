@@ -64,22 +64,20 @@
       <section>
         <header>
           <nav>
-            <a href="#">Sobre</a>
-            <a href="#">Blog</a>
+            <a href="{{ url_for('auth.about') }}">Sobre</a>
+            <a href="{{ url_for('auth.blog') }}">Blog</a>
             <select name="" id="">
               <option value="">Português (Brasil)</option>
               <option value="">Inglês (EUA)</option>
               <option value="">Espanhol</option>
             </select>
-            <a href="#">Termos</a>
-            <a href="#">Nosso App</a>
-            <a href="">Nossa IA</a>
+            <a href="{{ url_for('auth.terms') }}">Termos</a>
+            <a href="{{ url_for('auth.nossoApp') }}">Nosso App</a>
+            <a href="{{ url_for('auth.nossaIA') }}">Nossa IA</a>
           </nav>
         </header>
         <article>
-          <span class="copyright"
-            >Golden Boy | Copyright © Sonholândia | 2025</span
-          >
+          <span class="copyright">Golden Boy | Copyright © Sonholândia | 2025</span>
         </article>
       </section>
     </footer>

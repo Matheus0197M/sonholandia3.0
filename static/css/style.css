@@ -101,12 +101,13 @@ form{
 }
 
 form input{
-    padding: 5px 8px;
+    padding: 7px 9px;
     border: none;
     border-radius: 5px;
     font-size: medium;
-    background: #ddd;
-    color: #020025;
+    background: rgba(0, 0, 0, 0.2);
+    color: #eee;
+    border-bottom: 1px solid #eee;
 }
 
 form a{
@@ -132,15 +133,22 @@ a img{
     color: #fff;
     border: 2px solid #eee;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    font-size: 16px;
 }
 
 .botaoEntrar:hover,
 .botaoEntrar:active,
 .botaoEntrar:focus {
-    background: #eee;
+    text-decoration: underline;
     color: #8b00ff;
     border-color: #8b00ff;
     transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 
 .entrarGoogle{
@@ -154,18 +162,19 @@ a img{
 }
 
 .botaoCadastrar{
-    margin: 0 18px;
+    margin: 2rem 18px;
     transition: all 0.3s ease;
 }
 
 .botaoCadastrar:hover,
 .botaoCadastrar:active,
 .botaoCadastrar:focus {
-    background: #eee;
-    color: #8b00ff;
     transform: scale(1.05);
     border-radius: 5px;
     padding: 8px;
+    text-decoration: underline;
+    color: #8b00ff;
+    transition: all 0.3s ease;
 }
 
 article{

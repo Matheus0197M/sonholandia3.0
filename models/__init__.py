@@ -165,3 +165,41 @@ def mark_token_as_used(token):
     conn.commit()
     conn.close()
 
+def reset_database():
+    """Reseta o banco de dados completamente - APAGA TODOS OS DADOS"""
+    import os
+    from config import Config
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    try:
+        # Desabilita foreign keys temporariamente
+        cursor.execute('PRAGMA foreign_keys = OFF')
+        
+        # Remove todas as tabelas
+        cursor.execute('DROP TABLE IF EXISTS history')
+        cursor.execute('DROP TABLE IF EXISTS comments')
+        cursor.execute('DROP TABLE IF EXISTS favorites')
+        cursor.execute('DROP TABLE IF EXISTS likes')
+        cursor.execute('DROP TABLE IF EXISTS dreams')
+        cursor.execute('DROP TABLE IF EXISTS password_reset_tokens')
+        cursor.execute('DROP TABLE IF EXISTS users')
+        
+        # Remove índices
+        cursor.execute('DROP INDEX IF EXISTS idx_likes_dream')
+        cursor.execute('DROP INDEX IF EXISTS idx_favorites_user')
+        cursor.execute('DROP INDEX IF EXISTS idx_comments_dream')
+        cursor.execute('DROP INDEX IF EXISTS idx_history_user')
+        
+        conn.commit()
+        conn.close()
+        
+        # Reabilita foreign keys e recria o banco
+        init_db()
+        
+        return True
+    except Exception as e:
+        conn.close()
+        raise e
+

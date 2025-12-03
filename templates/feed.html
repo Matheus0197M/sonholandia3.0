@@ -76,7 +76,7 @@
           {% for dream in dreams %}
           <article class="reveal dream-card" data-dream-id="{{ dream.id }}">
             <div class="dream-preview">
-              <h2><a href="#" class="dream-link expand-dream" data-dream-id="{{ dream.id }}">{{ dream.title }}</a></h2>
+              <h2><a href="{{ url_for('dreams.view_dream', dream_id=dream.id) }}" class="dream-link">{{ dream.title }}</a></h2>
               <p class="dream-preview-text">{{ dream.description[:200] }}{% if dream.description|length > 200 %}...{% endif %}</p>
               {% if dream.image_path %}
               <div class="dream-image-preview">
