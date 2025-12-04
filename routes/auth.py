@@ -128,7 +128,7 @@ def signUp():
                 'picture': None
             }
             flash('Cadastro realizado com sucesso!', 'success')
-            return redirect(url_for('main.feed'))
+            return redirect(url_for('main.index'))
         except Exception as e:
             conn.close()
             logger.error(f"Erro ao cadastrar usuário: {e}")

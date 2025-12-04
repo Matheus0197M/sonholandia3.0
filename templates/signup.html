@@ -7,6 +7,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icons8-golfinho-96.png') }}">
     <title>Cadastro - Sonholândia</title>
   </head>
 
@@ -49,11 +50,15 @@
             <input type="email" name="email" placeholder="Email" required />
             <input type="password" name="password" placeholder="Senha (mínimo 6 caracteres)" required minlength="6" />
             <input type="password" name="confirm_password" placeholder="Confirmar senha" required minlength="6" />
-            <button type="submit" class="botaoEntrar" style="background: none; border: none; cursor: pointer; width: 100%;">Cadastrar</button>
+            <button type="submit" class="botaoEntrar" style="background: none; border: none; cursor: pointer; width: 100%;">Cadastrar
+              <img src="{{ url_for('static', filename='assets/icons8-selecionado-32.png') }}" alt="">
+            </button>
             <br />
             <p>
               Já tem uma conta?
-              <a href="{{ url_for('main.index') }}" class="botaoCadastrar">Faça login</a>
+              <a href="{{ url_for('main.index') }}" class="botaoCadastrar">Faça login
+                <img src="{{ url_for('static', filename='assets/iconSignUp.svg') }}" alt="User">
+              </a>
             </p>
           </form>
         </article>
