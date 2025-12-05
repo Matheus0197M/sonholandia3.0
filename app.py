@@ -8,10 +8,6 @@ from routes import auth_bp, main_bp, dreams_bp, api_bp
 from routes.oauth import init_oauth, set_oauth
 from utils import setup_ssl
 
-""" Importação do Flet - Framework UI """
-import flet as ft
-from flet.auth.providers.google_oauth_provider import GoogleOAuthProvider
-
 # Configuração de logging
 logging.basicConfig(
     level=logging.DEBUG,
