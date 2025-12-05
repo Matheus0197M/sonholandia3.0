@@ -64,22 +64,36 @@ def feed():
     if conditions:
         query += ' WHERE ' + ' AND '.join(conditions)
     
+    # Preserve parâmetros antes de adicionar LIMIT/OFFSET para a consulta de contagem
+    params_for_count = list(params)
+
     query += ' ORDER BY d.created_at DESC LIMIT ? OFFSET ?'
     params.extend([per_page, offset])
-    
-    cursor.execute(query, params)
+
+    try:
+        cursor.execute(query, params)
+    except Exception as e:
+        # Em caso de erro na consulta do feed, evita quebrar o site
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Erro ao consultar sonhos para o feed: {e}")
+        conn.close()
+        return render_template('feed.html', user=user, dreams=[], tag_filter=tag_filter, search_query=search_query, filter_type=filter_type, page=page, total_pages=0)
     dreams = cursor.fetchall()
     
     # Conta total para paginação
     count_query = 'SELECT COUNT(*) as total FROM dreams d'
     if conditions:
         count_query += ' WHERE ' + ' AND '.join(conditions)
-        count_params = params[:-2]  # Remove LIMIT e OFFSET
+        count_params = params_for_count
     else:
         count_params = []
-    
-    cursor.execute(count_query, count_params)
-    total = cursor.fetchone()['total']
+
+    try:
+        cursor.execute(count_query, count_params)
+        total = cursor.fetchone()['total']
+    except Exception:
+        total = 0
     total_pages = (total + per_page - 1) // per_page
     
     conn.close()

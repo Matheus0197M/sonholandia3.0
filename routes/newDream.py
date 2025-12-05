@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 # Configuração de upload
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'static', 'uploads', 'dreams')
+# Ajusta o caminho para a pasta static/uploads/dreams relativa ao root do projeto
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'uploads', 'dreams')
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -246,7 +247,7 @@ def edit_dream(dream_id):
                 ensure_upload_folder()
                 # Remove imagem antiga se existir
                 if image_path:
-                    old_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'static', image_path)
+                    old_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', image_path)
                     if os.path.exists(old_path):
                         try:
                             os.remove(old_path)
@@ -309,7 +310,7 @@ def delete_dream(dream_id):
     try:
         # Remove imagem se existir
         if dream['image_path']:
-            image_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'static', dream['image_path'])
+            image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', dream['image_path'])
             if os.path.exists(image_path):
                 try:
                     os.remove(image_path)

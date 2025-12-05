@@ -87,7 +87,7 @@
               {% if dream.tags_list %}
               <article class="hashtags">
                 {% for tag in dream.tags_list %}
-                <a href="{{ url_for('main.feed') }}?tag={{ tag }}" class="tagsEngajamento">#{{ tag }}</a>
+                <a href="{{ url_for('main.feed', tag=tag) }}" class="tagsEngajamento">#{{ tag }}</a>
                 {% endfor %}
               </article>
               {% endif %}
@@ -113,11 +113,25 @@
           {% endfor %}
         {% else %}
           <article class="reveal" id="sonho">
-            <h2>Nenhum sonho encontrado</h2>
-            <p>Seja o primeiro a postar um sonho!</p>
-            <div class="buttonsDreams">
-              <a href="{{ url_for('dreams.post_dream') }}" class="verMaisDentro">Postar um sonho</a>
-            </div>
+            {% if tag_filter %}
+              <h2>Nenhum sonho encontrado com a tag <strong>#{{ tag_filter }}</strong></h2>
+              <p>Não foram encontrados sonhos que contenham a tag <strong>#{{ tag_filter }}</strong>.</p>
+              <div class="buttonsDreams">
+                <a href="{{ url_for('main.feed') }}" class="verMaisDentro">Voltar ao Feed</a>
+              </div>
+            {% elif search_query %}
+              <h2>Nenhum sonho encontrado para <strong>{{ search_query }}</strong></h2>
+              <p>Não foram encontrados sonhos relacionados à busca <strong>{{ search_query }}</strong>.</p>
+              <div class="buttonsDreams">
+                <a href="{{ url_for('main.feed') }}" class="verMaisDentro">Voltar ao Feed</a>
+              </div>
+            {% else %}
+              <h2>Nenhum sonho encontrado</h2>
+              <p>Seja o primeiro a postar um sonho!</p>
+              <div class="buttonsDreams">
+                <a href="{{ url_for('dreams.post_dream') }}" class="verMaisDentro">Postar um sonho</a>
+              </div>
+            {% endif %}
           </article>
         {% endif %}
         {% if tag_filter or search_query or filter_type %}

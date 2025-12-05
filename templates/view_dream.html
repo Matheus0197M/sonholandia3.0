@@ -79,7 +79,7 @@
             {% if tags %}
             <div class="dream-tags">
                 {% for tag in tags %}
-                <a href="{{ url_for('main.feed') }}?tag={{ tag }}" class="tag-link">
+                <a href="{{ url_for('main.feed', tag=tag) }}" class="tag-link">
                     #{{ tag }}
                 </a>
                 {% endfor %}
