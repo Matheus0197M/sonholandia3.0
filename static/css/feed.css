@@ -23,7 +23,7 @@ header{
     height: 10dvh;
     position: relative;
 }
-
+ 
 nav{
     display: flex;
     gap: 2rem;
@@ -32,6 +32,24 @@ nav{
     width: 100%;
     max-width: 1400px;
     justify-content: space-between;
+}
+
+.titleFeed{
+    color: white;
+    font-weight: 700;
+    font-family: monospace, sans-serif;
+    text-align: center;
+    word-spacing: 4px;
+    text-decoration: none;
+    font-size: 30px;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.titleFeed:hover{
+    color: lightblue;
+    background: rgba(2, 156, 228, 0.4);
+    transition: all linear 0.2s;
 }
 
 /* Avatar e Nome do Usuário */
