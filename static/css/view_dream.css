@@ -390,6 +390,18 @@ main {
     color: #ffd700;
 }
 
+#toggleComments{
+    background: #222;
+    border: none;
+    padding: 8px;
+    color: #eee;
+    border-radius: 8px;
+}
+
+#toggleComments:hover{
+    background: rgba(255, 255, 255, 0.1);
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
     .dream-view {
