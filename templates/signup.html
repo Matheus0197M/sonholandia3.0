@@ -7,7 +7,11 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icons8-golfinho-96.png') }}">
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='assets/icons8-golfinho-96.png') }}"
+    />
     <title>Cadastro - Sonholândia</title>
   </head>
 
@@ -16,48 +20,86 @@
       <section class="sectionPrincipal">
         <article class="imagensLogin">
           <img
-          class="img01"
-          src="{{ url_for('static', filename='assets/pexels-photo-6255898.jpeg') }}"
-          alt=""
+            class="img01"
+            src="{{ url_for('static', filename='assets/pexels-photo-6255898.jpeg') }}"
+            alt=""
           />
           <img
             class="img02"
             src="{{ url_for('static', filename='assets/pexels-photo-3585088.jpeg') }}"
             alt=""
-            />
-            <img
-              class="img03"
-              src="{{ url_for('static', filename='assets/pexels-photo-5647280.jpeg') }}"
-              alt=""
-            />
+          />
+          <img
+            class="img03"
+            src="{{ url_for('static', filename='assets/pexels-photo-5647280.jpeg') }}"
+            alt=""
+          />
         </article>
 
         <article class="formLogin">
           <form action="{{ url_for('auth.signUp') }}" method="POST">
             <h1>Cadastre-se</h1>
             <br />
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }}" style="color: {% if category == 'error' %}red{% else %}green{% endif %}; margin-bottom: 10px;">
-                    {{ message }}
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-            <input type="text" name="name" placeholder="Nome completo (opcional)" />
-            <input type="text" name="username" placeholder="Nome de usuário" required />
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div
+              class="alert alert-{{ category }}"
+              style="color: {% if category == 'error' %}red{% else %}green{% endif %}; margin-bottom: 10px;"
+            >
+              {{ message }}
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+            <input
+              type="text"
+              name="name"
+              placeholder="Nome completo (opcional)"
+            />
+            <input
+              type="text"
+              name="username"
+              placeholder="Nome de usuário"
+              required
+            />
             <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Senha (mínimo 6 caracteres)" required minlength="6" />
-            <input type="password" name="confirm_password" placeholder="Confirmar senha" required minlength="6" />
-            <button type="submit" class="botaoEntrar" style="background: none; border: none; cursor: pointer; width: 100%;">Cadastrar
-              <img src="{{ url_for('static', filename='assets/icons8-selecionado-32.png') }}" alt="">
+            <input
+              type="password"
+              name="password"
+              placeholder="Senha (mínimo 6 caracteres)"
+              required
+              minlength="6"
+            />
+            <input
+              type="password"
+              name="confirm_password"
+              placeholder="Confirmar senha"
+              required
+              minlength="6"
+            />
+            <button
+              type="submit"
+              class="botaoEntrar"
+              style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+              "
+            >
+              Cadastrar
+              <img
+                src="{{ url_for('static', filename='assets/icons8-selecionado-32.png') }}"
+                alt=""
+              />
             </button>
             <br />
             <p>
               Já tem uma conta?
-              <a href="{{ url_for('main.index') }}" class="botaoCadastrar">Faça login
-                <img src="{{ url_for('static', filename='assets/iconSignUp.svg') }}" alt="User">
+              <a href="{{ url_for('main.index') }}" class="botaoCadastrar"
+                >Faça login
+                <img
+                  src="{{ url_for('static', filename='assets/icons8-entrar-48 (2).png') }}"
+                  alt=""
+                />
               </a>
             </p>
           </form>
@@ -82,7 +124,9 @@
           </nav>
         </header>
         <article>
-          <span class="copyright">Golden Boy | Copyright © Sonholândia | 2025</span>
+          <span class="copyright"
+            >Golden Boy | Copyright © Sonholândia | 2025</span
+          >
         </article>
       </section>
     </footer>
@@ -90,4 +134,3 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
 </html>
-
