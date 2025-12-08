@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         html += '<h4 style="margin-top: 0; color: #667eea;">Significados Encontrados:</h4>';
                         
                         data.meanings.forEach(m => {
-                            html += `<div class="meaning-item" style="margin: 0.8rem 0; padding: 0.8rem; background: #f5f5f5; border-left: 4px solid #667eea; border-radius: 4px;">`;
+                            html += `<div class="meaning-item" style="margin: 0.8rem 0; padding: 0.8rem; background: #f5f5f5; border-left: 4px solid #667eea; border-radius: 4px; color: #000;">`;
                             html += `<strong>#${m.word}</strong><br>`;
                             html += `<small>${m.meaning}</small><br>`;
                             html += `<small style="color: #999;">Fonte: ${m.source}</small>`;
