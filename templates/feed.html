@@ -97,6 +97,9 @@
               </div>
               <div class="buttonsDreams">
                 <button class="verMaisDentro expand-dream-btn" data-dream-id="{{ dream.id }}">Ver mais</button>
+                <button class="action-btn meaning-btn" data-dream-id="{{ dream.id }}" title="Ver significado do sonho">
+                  <i class="bi bi-lightbulb"></i> Significado
+                </button>
                 <button class="action-btn like-btn" data-dream-id="{{ dream.id }}" data-liked="{{ 'true' if dream.is_liked else 'false' }}">
                   <i class="bi bi-heart{% if dream.is_liked %}-fill{% endif %}"></i>
                   <span class="like-count">{{ dream.like_count or 0 }}</span>

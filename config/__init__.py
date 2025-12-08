@@ -19,6 +19,16 @@ class Config:
     FACEBOOK_CLIENT_SECRET = os.getenv("FACEBOOK_CLIENT_SECRET")
     FACEBOOK_REDIRECT_URI = os.getenv("FACEBOOK_REDIRECT_URI")
     
+    # Email Validation (mail.so)
+    API_EMAIL_KEY = os.getenv("API_EMAIL_KEY")
+    
+    # Dream Meanings API (RapidAPI)
+    RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
+    RAPIDAPI_HOST = os.getenv("RAPIDAPI_HOST")
+    
+    # Translation Service
+    TRANSLATION_API_URL = os.getenv("TRANSLATION_API_URL", "http://localhost:5000/api/translate")
+    
     # Email (para recuperação de senha)
     MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
     MAIL_PORT = int(os.getenv("MAIL_PORT", 587))

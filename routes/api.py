@@ -1,6 +1,8 @@
 """Rotas de API para funcionalidades interativas"""
 from flask import jsonify, request, session
 from models import get_db
+from utils.dream_meanings import get_dream_meaning, get_keywords_from_dream
+from utils.translator import get_text
 from . import api_bp
 
 @api_bp.route('/api/like', methods=['POST'])
@@ -258,4 +260,77 @@ def get_dream_stats(dream_id):
     except Exception as e:
         conn.close()
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@api_bp.route('/api/dream-meaning/<int:dream_id>', methods=['GET'])
+def get_dream_meaning_api(dream_id):
+    """API para obter significados de um sonho"""
+    user = session.get('user')
+    if not user:
+        return jsonify({'success': False, 'error': 'Não autenticado'}), 401
+    
+    # Parâmetro de idioma (padrão: português)
+    lang = request.args.get('lang', 'pt').lower()
+    if lang not in ['pt', 'en', 'es', 'fr', 'de']:
+        lang = 'pt'
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    try:
+        # Busca o sonho
+        cursor.execute('SELECT title, description FROM dreams WHERE id = ?', (dream_id,))
+        dream = cursor.fetchone()
+        conn.close()
+        
+        if not dream:
+            return jsonify({'success': False, 'error': 'Sonho não encontrado'}), 404
+        
+        # Extrai palavras-chave do título e descrição
+        dream_text = f"{dream['title']} {dream['description']}"
+        keywords = get_keywords_from_dream(dream_text)
+        
+        # Busca significados para cada palavra-chave
+        meanings = []
+        for keyword in keywords:
+            meaning_data = get_dream_meaning(keyword, lang)
+            if meaning_data and meaning_data['source'] != 'error':
+                meanings.append(meaning_data)
+        
+        return jsonify({
+            'success': True,
+            'dream_id': dream_id,
+            'keywords': keywords,
+            'meanings': meanings,
+            'language': lang
+        })
+    
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@api_bp.route('/api/dream-meaning/search', methods=['POST'])
+def search_dream_meaning():
+    """API para buscar significado de uma palavra específica"""
+    user = session.get('user')
+    if not user:
+        return jsonify({'success': False, 'error': 'Não autenticado'}), 401
+    
+    data = request.get_json()
+    word = data.get('word', '').strip().lower()
+    lang = data.get('language', 'pt').lower()
+    
+    if not word:
+        return jsonify({'success': False, 'error': 'Palavra não fornecida'}), 400
+    
+    try:
+        meaning_data = get_dream_meaning(word, lang)
+        return jsonify({
+            'success': True,
+            **meaning_data
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 

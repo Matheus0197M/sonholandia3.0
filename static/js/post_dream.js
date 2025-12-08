@@ -48,68 +48,24 @@ document.addEventListener('DOMContentLoaded', function() {
     dreamTypeSelect.addEventListener('change', updateProgress);
     tagsInput.addEventListener('input', updateProgress);
 
-    // Formatação automática de tags - CORRIGIDO: permite espaços após tags
-    tagsInput.addEventListener('input', function(e) {
-        let value = this.value;
-        let cursorPos = this.selectionStart;
-        
-        // Se o usuário digitou espaço após uma tag completa (terminada com # ou seguida de espaço/vírgula)
-        // Permite o espaço e adiciona # na próxima palavra quando começar a digitar
-        if (value.length > 0) {
-            // Processa apenas quando o usuário para de digitar (não interfere com espaços)
-            const words = value.split(/(\s+)/);
-            let processed = [];
-            
-            for (let i = 0; i < words.length; i++) {
-                let word = words[i];
-                
-                // Se for espaço, mantém
-                if (/^\s+$/.test(word)) {
-                    processed.push(word);
-                    continue;
-                }
-                
-                // Se for vírgula, mantém
-                if (word === ',') {
-                    processed.push(word);
-                    continue;
-                }
-                
-                // Remove # existente para processar
-                word = word.replace(/^#+/, '');
-                
-                // Se a palavra não está vazia e não começa com #, adiciona
-                if (word.trim()) {
-                    // Se a palavra anterior não terminou com #, adiciona
-                    if (processed.length === 0 || !processed[processed.length - 1].endsWith('#')) {
-                        processed.push('#' + word.trim());
-                    } else {
-                        processed.push(word.trim());
-                    }
-                }
-            }
-            
-            const newValue = processed.join('');
-            
-            // Só atualiza se mudou significativamente (não apenas espaços)
-            if (newValue.replace(/\s/g, '') !== value.replace(/\s/g, '')) {
-                this.value = newValue;
-                // Restaura posição do cursor
-                this.setSelectionRange(cursorPos, cursorPos);
-            }
-        }
-    });
-    
-    // Processa tags quando o campo perde o foco (formatação final)
+    // Formatação de tags - SEM interferência no input (sem movimento de cursor)
+    // A formatação final ocorre apenas no blur (quando sai do campo)
     tagsInput.addEventListener('blur', function() {
-        let value = this.value;
-        // Remove múltiplos espaços, mas mantém espaços entre tags
-        value = value.replace(/\s+/g, ' ').trim();
-        // Garante que cada palavra comece com #
-        value = value.split(' ').map(tag => {
-            tag = tag.trim().replace(/^#+/, '');
-            return tag ? '#' + tag : '';
-        }).filter(tag => tag).join(' ');
+        let value = this.value.trim();
+        if (!value) return;
+        
+        // Substitui vírgulas por espaços para normalização
+        value = value.replace(/,/g, ' ');
+        
+        // Remove # existentes (vamos adicionar de forma consistente)
+        value = value.replace(/#/g, '');
+        
+        // Divide por espaços e filtra vazios
+        let tags = value.split(/\s+/).filter(tag => tag.length > 0);
+        
+        // Reconstrói com # no início de cada tag
+        value = tags.map(tag => '#' + tag.toLowerCase()).join(' ');
+        
         this.value = value;
     });
 

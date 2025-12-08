@@ -1,8 +1,12 @@
 """Rotas principais da aplicação"""
 from flask import render_template, session, redirect, url_for, request, jsonify
 import json
+import logging
 from models import get_db
+from utils.cache import cache_result
 from . import main_bp
+
+logger = logging.getLogger(__name__)
 
 @main_bp.route('/')
 def index():
@@ -31,9 +35,10 @@ def feed():
     per_page = 10
     offset = (page - 1) * per_page
     
-    # Query base
+    # Query otimizada: JOIN com subqueries para contagens
     query = '''
-        SELECT d.*, u.username, u.name, u.picture,
+        SELECT d.id, d.user_id, d.title, d.description, d.dream_type, d.tags, d.image_path,
+               d.created_at, u.username, u.name, u.picture,
                (SELECT COUNT(*) FROM likes WHERE dream_id = d.id) as like_count,
                (SELECT COUNT(*) FROM likes WHERE dream_id = d.id AND user_id = ?) > 0 as is_liked,
                (SELECT COUNT(*) FROM favorites WHERE dream_id = d.id AND user_id = ?) > 0 as is_favorited

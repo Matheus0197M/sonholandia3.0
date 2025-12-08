@@ -112,10 +112,19 @@ def init_db():
     ''')
     
     # Índices para melhor performance
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_dreams_user_id ON dreams(user_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_dreams_created_at ON dreams(created_at DESC)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_likes_dream ON likes(dream_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_likes_user ON likes(user_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_favorites_dream ON favorites(dream_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_comments_dream ON comments(dream_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_comments_user ON comments(user_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_history_user ON history(user_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_history_dream ON history(dream_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_dreams_tags ON dreams(tags)')
     
     conn.commit()
     conn.close()

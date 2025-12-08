@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 
 from models import get_db, create_password_reset_token, validate_password_reset_token, mark_token_as_used
+from utils.email_validator import is_email_valid
+from config import Config
 from . import auth_bp
 
 logger = logging.getLogger(__name__)
@@ -95,6 +97,13 @@ def signUp():
         
         if len(password) < 6:
             flash('A senha deve ter pelo menos 6 caracteres.', 'error')
+            return render_template('signup.html')
+        
+        # Valida email com mail.so
+        api_key = Config.API_EMAIL_KEY
+        is_valid, validation_msg = is_email_valid(email, api_key, allow_free=True, allow_temporary=False)
+        if not is_valid:
+            flash(f'Email inválido: {validation_msg}', 'error')
             return render_template('signup.html')
         
         conn = get_db()

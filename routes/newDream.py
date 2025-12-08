@@ -1,14 +1,12 @@
 """Rotas para postagem e visualização de sonhos"""
 from flask import render_template, session, redirect, url_for, request, flash, jsonify
 import logging
-import time
 import json
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
 from models import get_db
-from config import Config
 from . import dreams_bp
 
 logger = logging.getLogger(__name__)

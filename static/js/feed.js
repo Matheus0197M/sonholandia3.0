@@ -233,7 +233,68 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Erro ao registrar histórico:', error));
     }
     
-    // Sistema de Busca
+    // Sistema de Significados de Sonhos
+    const meaningButtons = document.querySelectorAll('.meaning-btn');
+    meaningButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dreamId = this.getAttribute('data-dream-id');
+            toggleDreamMeaning(dreamId, this);
+        });
+    });
+    
+    function toggleDreamMeaning(dreamId, button) {
+        const dreamCard = document.querySelector(`.dream-card[data-dream-id="${dreamId}"]`);
+        if (!dreamCard) return;
+        
+        let meaningDiv = dreamCard.querySelector('.dream-meanings-container');
+        
+        if (meaningDiv && meaningDiv.style.display !== 'none') {
+            // Fecha significados
+            meaningDiv.style.display = 'none';
+            button.classList.remove('active');
+        } else {
+            // Abre significados
+            if (!meaningDiv) {
+                // Cria container
+                meaningDiv = document.createElement('div');
+                meaningDiv.className = 'dream-meanings-container';
+                meaningDiv.innerHTML = '<div style="padding: 1rem; text-align: center;"><i class="bi bi-hourglass-split"></i> Buscando significados...</div>';
+                dreamCard.appendChild(meaningDiv);
+            }
+            
+            meaningDiv.style.display = 'block';
+            button.classList.add('active');
+            
+            // Busca significados da API
+            fetch(`/api/dream-meaning/${dreamId}?lang=pt`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.meanings && data.meanings.length > 0) {
+                        let html = '<div class="meanings-list" style="padding: 1rem;">';
+                        html += '<h4 style="margin-top: 0; color: #667eea;">Significados Encontrados:</h4>';
+                        
+                        data.meanings.forEach(m => {
+                            html += `<div class="meaning-item" style="margin: 0.8rem 0; padding: 0.8rem; background: #f5f5f5; border-left: 4px solid #667eea; border-radius: 4px;">`;
+                            html += `<strong>#${m.word}</strong><br>`;
+                            html += `<small>${m.meaning}</small><br>`;
+                            html += `<small style="color: #999;">Fonte: ${m.source}</small>`;
+                            html += `</div>`;
+                        });
+                        
+                        html += '</div>';
+                        meaningDiv.innerHTML = html;
+                    } else {
+                        meaningDiv.innerHTML = '<div style="padding: 1rem; color: #ff6b6b;">Nenhum significado encontrado para este sonho.</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar significados:', error);
+                    meaningDiv.innerHTML = '<div style="padding: 1rem; color: #ff6b6b;">Erro ao carregar significados.</div>';
+                });
+        }
+    }
+    
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         let searchTimeout;
