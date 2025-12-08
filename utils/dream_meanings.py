@@ -1,8 +1,14 @@
-"""API para buscar significados de sonhos usando cache e API externa"""
+"""API para buscar significados de sonhos usando cache e API externa
+Integração com RapidAPI (ai-dream-interpretation-dream-dictionary-dream-analysis).
+Se a chave `RAPIDAPI_KEY` não estiver configurada, o módulo usa o dicionário local como
+fallback.
+"""
 import logging
 import requests
+import json
 from functools import lru_cache
 from models import get_db
+from config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -51,36 +57,35 @@ def get_dream_meaning(dream_word: str, lang: str = 'pt') -> dict:
     if not dream_word:
         return {'word': '', 'meaning': 'Palavra inválida', 'source': 'error', 'language': lang}
     
-    # Tenta obter do cache local primeiro (mais rápido)
+    # Preferir a API externa quando a chave estiver configurada
+    try:
+        if Config.RAPIDAPI_KEY:
+            api_result = _fetch_from_dream_api(dream_word, lang)
+            if api_result:
+                return api_result
+    except Exception as e:
+        logger.warning(f"Falha ao consultar RapidAPI: {e}")
+
+    # Tenta obter do cache local (fallback)
     if dream_word in DREAM_MEANINGS_LOCAL:
         meaning = DREAM_MEANINGS_LOCAL[dream_word]
-        
+
         # Traduz se necessário
         if lang != 'pt':
             try:
                 from utils.translator import translate_text
                 meaning = translate_text(meaning, lang, 'pt')
-            except:
+            except Exception:
                 pass
-        
+
         return {
             'word': dream_word,
             'meaning': meaning,
             'source': 'local',
             'language': lang
         }
-    
-    # Tenta buscar de API externa (fallback)
-    try:
-        # Usando uma API gratuita de significados de sonhos
-        # Alternativa: https://rapidapi.com/laxmanprabhakar/api/dream-interpretation-api
-        result = _fetch_from_dream_api(dream_word, lang)
-        if result:
-            return result
-    except Exception as e:
-        logger.error(f"Erro ao buscar significado da API: {e}")
-    
-    # Fallback: retorna mensagem genérica
+
+    # Fallback genérico
     return {
         'word': dream_word,
         'meaning': f'Significado de "{dream_word}" não encontrado. Tente outras palavras-chave relacionadas ao seu sonho.',
@@ -95,20 +100,107 @@ def _fetch_from_dream_api(word: str, lang: str) -> dict:
     Usa APIs gratuitas disponíveis.
     """
     try:
-        # Opção 1: Dream API gratuita do RapidAPI (requer chave, deixar comentado)
-        # url = f"https://laxmanprabhakar-dream-interpretation-api.p.rapidapi.com/{word}"
-        # headers = {
-        #     "X-RapidAPI-Key": os.getenv("RAPIDAPI_KEY"),
-        #     "X-RapidAPI-Host": "laxmanprabhakar-dream-interpretation-api.p.rapidapi.com"
-        # }
-        # response = requests.get(url, headers=headers, timeout=5)
-        # if response.status_code == 200:
-        #     data = response.json()
-        #     meaning = data.get('interpretations', [{}])[0].get('interpretation', '')
-        
-        # Por enquanto, retorna None para usar cache local
-        return None
-    except:
+        rapid_key = Config.RAPIDAPI_KEY
+        rapid_host = Config.RAPIDAPI_HOST or 'ai-dream-interpretation-dream-dictionary-dream-analysis.p.rapidapi.com'
+        if not rapid_key:
+            return None
+
+        url = f"https://{rapid_host}/dreamDictionary?noqueue=1"
+        # Alguns serviços esperam um 'symbol' em inglês (ex: 'Snake').
+        # Se o idioma solicitado não for inglês, tentamos traduzir a palavra-chave
+        # para inglês antes de consultar a API, e então traduzimos a resposta
+        # de volta para o idioma desejado.
+        symbol_to_send = word
+        try:
+            if lang != 'en':
+                from utils.translator import translate_text
+                # traduz de lang -> en
+                symbol_translated = translate_text(word, 'en', lang)
+                if symbol_translated:
+                    symbol_to_send = symbol_translated
+        except Exception:
+            # se tradução falhar, continua com a palavra original
+            symbol_to_send = word
+
+        payload = {"symbol": symbol_to_send.title(), "language": 'en'}
+        headers = {
+            'x-rapidapi-key': rapid_key,
+            'x-rapidapi-host': rapid_host,
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.post(url, json=payload, headers=headers, timeout=8, verify=Config.SSL_VERIFY)
+        if response.status_code not in (200, 201):
+            logger.warning(f"RapidAPI returned status {response.status_code}: {response.text}")
+            return None
+
+        try:
+            data = response.json()
+        except ValueError:
+            # Retorna o texto bruto caso não seja JSON
+            return {
+                'word': word,
+                'meaning': response.text,
+                'source': 'rapidapi',
+                'language': lang
+            }
+
+        # Tentativa robusta de extrair o campo de interpretação
+        meaning_text = None
+        # Possíveis chaves conhecidas
+        for key in ('meaning', 'interpretation', 'result', 'description', 'text'):
+            if isinstance(data, dict) and key in data and data[key]:
+                meaning_text = data[key]
+                break
+
+        # Se o retorno for uma lista/objeto complexo, converte para string legível
+        if meaning_text is None:
+            try:
+                # Procura por alguma string aninhada
+                if isinstance(data, dict):
+                    # junta valores de strings
+                    parts = []
+                    for v in data.values():
+                        if isinstance(v, str):
+                            parts.append(v)
+                    if parts:
+                        meaning_text = '\n'.join(parts)
+                elif isinstance(data, list) and data:
+                    # pega primeiro item textual
+                    first = data[0]
+                    if isinstance(first, dict):
+                        for v in first.values():
+                            if isinstance(v, str):
+                                meaning_text = v
+                                break
+                    elif isinstance(first, str):
+                        meaning_text = first
+            except Exception:
+                meaning_text = None
+
+        if not meaning_text:
+            # fallback para a representação JSON
+            meaning_text = json.dumps(data, ensure_ascii=False)
+
+        # Se o usuário pediu outro idioma, traduzimos o texto de volta
+        final_meaning = meaning_text
+        try:
+            if lang != 'en':
+                from utils.translator import translate_text
+                translated_back = translate_text(meaning_text, lang, 'en')
+                if translated_back:
+                    final_meaning = translated_back
+        except Exception:
+            pass
+
+        return {
+            'word': word,
+            'meaning': final_meaning,
+            'source': 'rapidapi',
+            'language': lang
+        }
+    except Exception as e:
+        logger.error(f"Erro ao chamar RapidAPI: {e}")
         return None
 
 

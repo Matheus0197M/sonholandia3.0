@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-      rel="stylesheet"
+      rel="stylesheet"  
       href="{{ url_for('static', filename='css/style.css') }}"
     />
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icons8-golfinho-96.png') }}">
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='assets/icons8-golfinho-96.png') }}"
+    />
     <title>Sonholândia</title>
   </head>
 
@@ -36,19 +41,33 @@
           <form action="{{ url_for('auth.loginNormal') }}" method="POST">
             <h1>Sonholândia</h1>
             <br />
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }}" style="color: {% if category == 'error' %}red{% else %}green{% endif %}; margin-bottom: 10px;">
-                    {{ message }}
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-            <input type="text" name="username_or_email" placeholder="Usuário ou email" required />
-            <input type="password" name="password" placeholder="Senha" required />
-            <button type="submit" class="botaoEntrar" style="background: none; border: none; cursor: pointer; width: 100%;">Entrar 
-              <img src="{{ url_for('static', filename='assets/icons8-entrar-32.png') }}" alt="Login">
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div
+              class="alert alert-{{ category }}"
+              style="color: {% if category == 'error' %}red{% else %}green{% endif %}; margin-bottom: 10px;"
+            >
+              {{ message }}
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+            <input
+              type="text"
+              name="username_or_email"
+              placeholder="Usuário ou email"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Senha"
+              required
+            />
+            <button type="submit" class="botaoEntrar">
+              Entrar
+              <img
+                src="{{ url_for('static', filename='assets/icons8-entrar-32.png') }}"
+                alt="Login"
+              />
             </button>
 
             <article class="divDoOU">
@@ -58,25 +77,45 @@
               </h3>
             </article>
 
-            <a href="{{ url_for('auth.loginWithGoogle') }}" class="entrarGoogle">
+            <a
+              href="{{ url_for('auth.loginWithGoogle') }}"
+              class="entrarGoogle"
+            >
               <!-- svg Google (seu svg) -->
-               <img src="{{ url_for('static', filename='assets/iconGoogleLogin.svg') }}" alt="Google">
+              <img
+                src="{{ url_for('static', filename='assets/iconGoogleLogin.svg') }}"
+                alt="Google"
+              />
               Entrar com o Google
             </a>
 
-            <a href="{{ url_for('auth.loginWithFacebook') }}" class="entrarFacebook">
-              <img src="{{ url_for('static', filename='assets/iconFacebookLogin.svg') }}" alt="Facebook">
-              Entrar com o Meta</a>
-            <a href="{{ url_for('auth.forgotPassword') }}">Esqueceu a senha?
-              <img src="{{ url_for('static', filename='assets/icons8-escudo-de-pergunta-32.png') }}" alt="Esqueceu a senha?">
+            <a
+              href="{{ url_for('auth.loginWithFacebook') }}"
+              class="entrarFacebook"
+            >
+              <img
+                src="{{ url_for('static', filename='assets/iconFacebookLogin.svg') }}"
+                alt="Facebook"
+              />
+              Entrar com o Meta</a
+            >
+            <a href="{{ url_for('auth.forgotPassword') }}"
+              >Esqueceu a senha?
+              <img
+                src="{{ url_for('static', filename='assets/icons8-escudo-de-pergunta-32.png') }}"
+                alt="Esqueceu a senha?"
+              />
             </a>
             <br />
             <p>
               Não tem uma conta?
               <a href="{{ url_for('auth.signUp') }}" class="botaoCadastrar">
                 Cadastre-se
-                
-                <img src="{{ url_for('static', filename='assets/iconSignUp.svg') }}" alt="User">
+
+                <img
+                  src="{{ url_for('static', filename='assets/icons8-adicionar-usuário-masculino-32.png') }}"
+                  alt=""
+                />
               </a>
             </p>
           </form>
@@ -101,7 +140,9 @@
           </nav>
         </header>
         <article>
-          <span class="copyright">Golden Boy | Copyright © Sonholândia | 2025</span>
+          <span class="copyright"
+            >Golden Boy | Copyright © Sonholândia | 2025</span
+          >
         </article>
       </section>
     </footer>
