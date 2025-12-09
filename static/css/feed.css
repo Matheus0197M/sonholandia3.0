@@ -527,3 +527,24 @@ main{
 }
 
 /* FOOTER */
+
+/* ===== Responsividade (mobile) ===== */
+@media (max-width: 900px) {
+    header{ height: auto; padding: 1rem; }
+    nav{ margin: 0 1rem; gap: 1rem; }
+    .titleFeed{ font-size: 1.4rem; }
+    header input{ width: 100%; max-width: 360px; }
+    main{ margin: 2rem 1rem 1rem; }
+    #sonho, .dream-card{ margin: 1rem 0; padding: 0.75rem; }
+    .dream-image-preview img, .dream-full-image img{ max-height: 220px; }
+    .buttonsDreams{ flex-direction: row; gap: 0.5rem; }
+    .botaoCurtir, .botaoComentar, .botaoAddFavoritos{ width: 2.8rem; height: 2.8rem; }
+}
+
+@media (max-width: 420px) {
+    nav{ gap: 0.5rem; }
+    .titleFeed{ font-size: 1.1rem; }
+    header input{ width: 100%; }
+    .dream-full { padding-top: 0.5rem; }
+    .dream-full-content{ font-size: 0.95rem; }
+}

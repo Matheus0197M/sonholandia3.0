@@ -296,7 +296,18 @@ def get_dream_meaning_api(dream_id):
             meaning_data = get_dream_meaning(keyword, lang)
             if meaning_data and meaning_data['source'] != 'error':
                 meanings.append(meaning_data)
-        
+
+        # Se poucos significados foram encontrados, tente interpretar o texto completo
+        if len(meanings) < 2:
+            try:
+                full_meaning = get_dream_meaning(dream_text, lang)
+                if full_meaning and full_meaning.get('source') not in ('error', 'fallback'):
+                    # marca como interpretação de contexto
+                    full_meaning['context'] = True
+                    meanings.insert(0, full_meaning)
+            except Exception:
+                pass
+
         return jsonify({
             'success': True,
             'dream_id': dream_id,

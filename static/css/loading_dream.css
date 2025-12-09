@@ -88,18 +88,61 @@ body {
 
 /* Responsivo */
 @media (max-width: 768px) {
+    body { padding: 1rem; }
+    
+    .loading-container {
+        padding: 1rem;
+        max-width: 100%;
+    }
+
     .loading-content {
         padding: 2rem 1.5rem;
+        border-radius: 12px;
     }
 
     .loading-content h1 {
         font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .loading-content > p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .spinner {
         font-size: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .loading-bar {
+        height: 8px;
+        margin-bottom: 0.75rem;
     }
 }
+
+@media (max-width: 420px) {
+    .loading-container {
+        padding: 0.5rem;
+    }
+
+    .loading-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .loading-content h1 {
+        font-size: 1.2rem;
+    }
+
+    .spinner {
+        font-size: 2.5rem;
+    }
+
+    .loading-content > p {
+        font-size: 0.95rem;
+    }
+}
+
 
 
 

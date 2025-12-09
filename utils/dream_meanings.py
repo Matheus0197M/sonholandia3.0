@@ -6,9 +6,18 @@ fallback.
 import logging
 import requests
 import json
+import re
+import unicodedata
 from functools import lru_cache
 from models import get_db
 from config import Config
+
+# Tentamos usar rapidfuzz para fuzzy matching quando disponível
+try:
+    from rapidfuzz import process as rf_process, fuzz as rf_fuzz
+    _HAS_RAPIDFUZZ = True
+except Exception:
+    _HAS_RAPIDFUZZ = False
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +62,7 @@ def get_dream_meaning(dream_word: str, lang: str = 'pt') -> dict:
         }
     """
     dream_word = dream_word.lower().strip()
+    norm_word = _normalize_text(dream_word)
     
     if not dream_word:
         return {'word': '', 'meaning': 'Palavra inválida', 'source': 'error', 'language': lang}
@@ -67,23 +77,67 @@ def get_dream_meaning(dream_word: str, lang: str = 'pt') -> dict:
         logger.warning(f"Falha ao consultar RapidAPI: {e}")
 
     # Tenta obter do cache local (fallback)
-    if dream_word in DREAM_MEANINGS_LOCAL:
-        meaning = DREAM_MEANINGS_LOCAL[dream_word]
+    # 1) Checagem direta em keys locais
+    for key in DREAM_MEANINGS_LOCAL.keys():
+        if key == dream_word or key == norm_word:
+            meaning = DREAM_MEANINGS_LOCAL[key]
+            source = 'local'
+            break
+    else:
+        meaning = None
+        source = None
 
+    # 2) Substring / containment (ex: 'morte de alguém' vs 'morte')
+    if not meaning:
+        for key in DREAM_MEANINGS_LOCAL.keys():
+            if key in dream_word or dream_word in key:
+                meaning = DREAM_MEANINGS_LOCAL[key]
+                source = 'local_substring'
+                break
+
+    # 3) Fuzzy match usando rapidfuzz (se disponível)
+    if not meaning and _HAS_RAPIDFUZZ:
+        try:
+            choices = list(DREAM_MEANINGS_LOCAL.keys())
+            # procuramos o melhor candidato entre as chaves locais
+            match = rf_process.extractOne(dream_word, choices, scorer=rf_fuzz.token_sort_ratio)
+            if match and match[1] >= 65:  # threshold razoável
+                best = match[0]
+                meaning = DREAM_MEANINGS_LOCAL.get(best)
+                source = 'local_fuzzy'
+        except Exception:
+            meaning = None
+            source = None
+
+    # 4) Fallback: busca por tokens individuais
+    if not meaning:
+        tokens = [t for t in re.findall(r"\w+", norm_word) if len(t) > 2]
+        for t in tokens:
+            if t in DREAM_MEANINGS_LOCAL:
+                meaning = DREAM_MEANINGS_LOCAL[t]
+                source = 'local_token'
+                break
+
+    if meaning:
         # Traduz se necessário
+        final_meaning = meaning
         if lang != 'pt':
             try:
                 from utils.translator import translate_text
-                meaning = translate_text(meaning, lang, 'pt')
+                translated = translate_text(meaning, lang, 'pt')
+                if translated:
+                    final_meaning = translated
             except Exception:
                 pass
 
-        return {
+        result = {
             'word': dream_word,
-            'meaning': meaning,
-            'source': 'local',
+            'meaning': final_meaning,
+            'source': source or 'local',
             'language': lang
         }
+        # se tivermos score (fuzzy), inclua opcionalmente
+        return result
 
     # Fallback genérico
     return {
@@ -92,6 +146,19 @@ def get_dream_meaning(dream_word: str, lang: str = 'pt') -> dict:
         'source': 'fallback',
         'language': lang
     }
+
+
+def _normalize_text(text: str) -> str:
+    """Remove acentuação e normaliza texto para comparação.
+
+    Ex: 'Água' -> 'agua'
+    """
+    if not text:
+        return ''
+    text = text.lower()
+    text = unicodedata.normalize('NFKD', text)
+    text = ''.join(ch for ch in text if not unicodedata.combining(ch))
+    return text
 
 
 def _fetch_from_dream_api(word: str, lang: str) -> dict:

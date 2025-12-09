@@ -299,3 +299,34 @@ a:hover{
 
 /* OU, deu ideia aqui de fazer uma animação hover, que troca as cores, deixando o texto dourado linear e o fundo preto, mantendo a borda amarela */
 /* Tem que achar umas cor mais puxada para abelha, sei lá */
+
+/* ===== Responsividade (ajustes mobile) ===== */
+@media (max-width: 768px) {
+    body{
+        margin: 0 1rem;
+        gap: 1.5rem;
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+
+    section{ padding: 0.5rem; flex-direction: column; }
+
+    .imagensLogin{ display: none; }
+    .img01, .img02, .img03{ display: none; }
+
+    nav{ gap: 0.5rem; justify-content: space-between; padding: 0 0.5rem; }
+
+    h1{ font-size: 1.6rem; }
+    h3{ font-size: 1rem; }
+
+    form input{ width: 100%; }
+    .botaoEntrar{ width: 100%; padding: 12px; font-size: 16px; }
+
+    article{ padding: 0.75rem; }
+}
+
+@media (max-width: 420px) {
+    body{ gap: 1rem; }
+    h1{ font-size: 1.4rem; }
+    nav{ gap: 0.25rem; }
+}
