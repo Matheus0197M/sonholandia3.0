@@ -530,6 +530,12 @@ main{
 
 /* ===== Responsividade (mobile) ===== */
 @media (max-width: 900px) {
+    body{
+        margin: 0.5rem 1.4rem;
+        gap: 1rem;
+    }
+
+
     header{ 
         height: auto;
         padding: 1rem 0.75rem;
